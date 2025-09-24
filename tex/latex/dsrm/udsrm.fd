@@ -1,0 +1,5 @@
+\DeclareFontFamily{U}{dsrm}{}
+\DeclareFontShape{U}{dsrm}{m}{n}{
+    <-> dsrm/dsrm12
+}{}
+\endinput

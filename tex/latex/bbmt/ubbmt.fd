@@ -1,0 +1,66 @@
+%%
+%% This is file `ubbmt.fd',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% bbmt.dtx  (with options: `bbmt')
+%% 
+%% Copyright (C) 1994,1997 by Torsten Hilbrich
+%% 
+%% This file is part of the bbmt package, a support for using the bbmt* fonts.
+\def\fileversion{1.2}
+\def\filedate{1999/03/15}
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+\ProvidesFile{ubbmt.fd}[\filedate\space V\space\fileversion
+                      \space Font definition for bbmt font - TH]
+\DeclareFontFamily{U}{bbmt}{}
+\DeclareFontShape{U}{bbmt}{m}{n}{
+    <5><6> bbmt5
+    <7> bbmt6
+    <8> bbmt7
+    <9> bbmt8
+    <10><10.95> bbmt9
+    <12><14.4> bbmt10
+    <17.28> bbmt12
+    <20.74><24.88> bbmt17
+}{}
+\DeclareFontShape{U}{bbmt}{m}{sl}{
+    <5><6><7><8><9> bbmtsl8
+    <10><10.95> bbmtsl9
+    <12> bbmtsl10
+    <14.4><17.28><20.74><24.88> bbmtsl12
+}{}
+\DeclareFontShape{U}{bbmt}{bx}{n}{
+    <5><6> bbmtbx5
+    <7> bbmtbx6
+    <8> bbmtbx7
+    <9> bbmtbx8
+    <10><10.95> bbmtbx9
+    <12> bbmtbx10
+    <14.4><17.28><20.74><24.88> bbmtbx12
+}{}
+\DeclareFontShape{U}{bbmt}{bx}{sl}{
+    <-> bbmtbxsl10
+}{}
+\DeclareFontShape{U}{bbmt}{b}{n}{
+    <5><6><7><8><9><10><10.95><12><14.4><17.28><20.74><24.88> bbmtb10
+}{}
+
+\endinput
+%%
+%% End of file `ubbmt.fd'.

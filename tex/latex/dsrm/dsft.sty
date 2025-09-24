@@ -1,0 +1,39 @@
+\DeclareSymbolFont{mathds}{U}{dsrm}{m}{n}
+\DeclareMathAlphabet{\mathds}{U}{dsrm}{m}{n}
+\newcommand\ind[1]{\mathds{1}_{#1}}
+\let\star\relax
+\let\square\relax
+\let\triangle\relax
+\DeclareMathSymbol{\square}{\mathbin}{mathds}{"41}
+\DeclareMathSymbol{\star}{\mathbin}{mathds}{"42}
+\DeclareMathSymbol{\triangle}{\mathbin}{mathds}{"43}
+\newcommand{\filledstar}[1]{%
+    \ifcase#1\relax%
+        \ensuremath{\mathds{B}}%
+    \or\relax%
+        \ensuremath{\mathds{D}}%
+    \or\relax%
+        \ensuremath{\mathds{E}}%
+    \or\relax%
+        \ensuremath{\mathds{F}}%
+    \or\relax%
+        \ensuremath{\mathds{G}}%
+    \or\relax%
+        \ensuremath{\mathds{H}}%
+    \else%
+        \hphantom{\ensuremath{\mathds{B}}}
+    \fi%
+}
+\newcommand{\rmbeta}{\ensuremath{\mathds{b}}}
+\newcommand{\rmepsilon}{\ensuremath{\mathds{e}}}
+\newcommand{\rmphi}{\ensuremath{\mathds{f}}}
+\newcommand{\rmgamma}{\ensuremath{\mathds{g}}}
+\newcommand{\rmiota}{\ensuremath{\mathds{i}}}
+\newcommand{\rmkappa}{\ensuremath{\mathds{k}}}
+\newcommand{\rmmu}{\ensuremath{\mathds{m}}}
+\newcommand{\rmnu}{\ensuremath{\mathds{n}}}
+\newcommand{\rmomicron}{\ensuremath{\mathds{o}}}
+\newcommand{\rmpi}{\ensuremath{\mathds{p}}}
+\newcommand{\rmrho}{\ensuremath{\mathds{r}}}
+\newcommand{\rmtau}{\ensuremath{\mathds{t}}}
+\newcommand{\rmvarsigma}{\ensuremath{\mathds{v}}}
