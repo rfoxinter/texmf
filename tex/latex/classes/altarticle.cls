@@ -303,6 +303,7 @@
 \robustify{\toggleboldmath}
 \apptocmd{\boldmath}{\def\toggleboldmath{true}}{}{}
 \apptocmd{\unboldmath}{\def\toggleboldmath{false}}{}{}
+\def\convertto#1#2{\strip@pt\dimexpr #2*65536/\number\dimexpr 1#1} % eg: \convertto{pt}{1em}pt
 
 
 
@@ -553,7 +554,14 @@
 \let\varsupset\supset
 \let\supset\supseteq
 %% Arrows
-\def\acts{\mathrel{\begin{tikzpicture}[baseline=-.85ex]\draw[->,line cap=round] (0,0) to[out=35,in=145] (1/3,-.005);\end{tikzpicture}}}
+\def\acts{%
+    \savebox{\actstobox}{${\to}$}%
+    \settoheight{\myhh}{\usebox{\actstobox}}%
+    \settodepth{\mydd}{\usebox{\actstobox}}%
+    \settowidth{\myww}{\usebox{\actstobox}}%
+    \edef\mulen{\convertto{1pt}{1em}pt}%
+    \mathrel{\begin{tikzpicture}[baseline=-.85ex]\draw[-{>[length=.25em,width=1.25*\the\myhh]},line cap=round,line width=.085ex,smooth] (0,1/9em) to[out=50,in=130] ($(\the\myww,-.005)+(-\mulen,0)$);\end{tikzpicture}}%
+}
 %% Textstyle align
 \newenvironment{tflalign*}
     {\let\olddisplaystyle\displaystyle\let\displaystyle\textstyle\csname flalign*\endcsname}
