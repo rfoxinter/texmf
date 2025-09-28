@@ -554,6 +554,10 @@
 \let\varsupset\supset
 \let\supset\supseteq
 %% Arrows
+\newsavebox{\actstobox}
+\newlength{\myhh}
+\newlength{\mydd}
+\newlength{\myww}
 \def\acts{%
     \savebox{\actstobox}{${\to}$}%
     \settoheight{\myhh}{\usebox{\actstobox}}%
