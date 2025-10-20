@@ -18,7 +18,6 @@
 
 %%% Import packages and options
 \LoadClass[a4paper]{article}
-\usepackage{ifpdf}
 \usepackage[utf8]{inputenc}
 \usepackage{babel}
 \usepackage[T1]{fontenc}
@@ -255,6 +254,7 @@
         \hbox{\strut\rlap{\color{white}\pdfliteral{2 Tr 1.1 w}#1\pdfliteral{0 Tr 0 w}}#1} 
 }}
 \everymath{\def\underline{\mathunderline}}
+\DeclareRobustCommand\strikethrough[1]{\raisebox{1ex}{\mathunderline{\smash{\raisebox{-1ex}{#1}}}}}
 \title{}
 \author{}
 \def\refname{Références\phantomsection}
@@ -372,25 +372,21 @@
 \bshft=.18pt\relax
 \DeclareRobustCommand\fakebold[1]{\setbox0=\hbox{$#1$}#1\kern-\wd0\kern\bshft#1\kern-\wd0\kern\bshft#1}
 %% Unslant
+\newcommand{\slantbox}[2][-.25]{\kern-.125em%
+    \begin{tikzpicture}[outer sep=0, inner sep=0]%
+    \begin{scope}[cm={1,0,-.25,1,(0,0)},baseline=0,outer sep=0, inner sep=0]
+    \node[transform shape] at (0,0) {#2};%
+    \end{scope}%
+    \end{tikzpicture}%
+}
 \newsavebox{\foobox}
-\newcommand{\slantbox}[2][0]{\mbox{%
-    \sbox{\foobox}{#2}%
-    \hskip\wd\foobox
-    \pdfsave
-    \pdfsetmatrix{1 0 #1 1}%
-    \llap{\usebox{\foobox}}%
-    \pdfrestore
-}}
 \newlength{\foodim}
 \newcommand{\greekslantbox}[1]{\mbox{%
     \sbox{\foobox}{#1}%
     \foodim=-.25\wd\foobox%
     \hskip \wd\foobox%
-    \hskip -.5\foodim
-    \pdfsave
-    \pdfsetmatrix{1 0 -.25 1}%
-    \llap{\usebox{\foobox}}%
-    \pdfrestore%
+    \hskip -.5\foodim%
+    \slantbox{\usebox{\foobox}}%
     \hskip .5\foodim%
 }}
 \DeclareRobustCommand{\unslant}[2][-.25]{\slantbox[#1]{$#2$}}
@@ -2026,7 +2022,7 @@ space before arrow={0.2ex},
     }
 }
 %% Polynomes
-\newcommand{\pol}[2]{\mathbb{#1}\left[#2\right]}
+\newcommand{\pol}[3][]{\mathbb{#2}_{#1}\left[#3\right]}
 \newcommand{\fr}[2]{\mathbb{#1}\l#2\r}
 \let\olddeg\deg
 \renewcommand{\deg}[1]{\olddeg\l#1\r}
@@ -2491,18 +2487,13 @@ space before arrow={0.2ex},
 \newcommand{\derfrac}[2]{{\analysedisplay\oldderfrac{#1}{#2}}}
 
 \let\slantpartial\partial
-\ifpdf
-    % pdf output
-    \newsavebox{\partialbox}
-    \newcommand{\displaypartial}{\mathop{}\mkern-3mu\noexpand{\unslant{\displaystyle\textstyle\slantpartial}}\kern-1.2pt}
-    \newcommand{\normalpartial}{\mathop{}\mkern-3mu\noexpand{\unslant{\textstyle\slantpartial}}\kern-1.2pt}
-    \newcommand{\scriptpartial}{\mathop{}\mkern-3mu\noexpand{\unslant{\scriptstyle\slantpartial}}\kern-1.2pt}
-    \newcommand{\scriptscriptpartial}{\mathop{}\mkern-3mu\noexpand{\unslant{\scriptscriptstyle\slantpartial}}\kern-1.2pt}
-    \renewcommand{\partial}{\mathchoice{\displaypartial}{\normalpartial}{\scriptpartial}{\scriptscriptpartial}}
-\else
-    % other output
-    \renewcommand{\partial}{\slantpartial\kern-0.8pt}
-\fi
+\newsavebox{\partialbox}
+\newcommand{\displaypartial}{\mathop{}\mkern-3mu\noexpand{\unslant{\displaystyle\textstyle\slantpartial}}\kern-1.2pt}
+\newcommand{\normalpartial}{\mathop{}\mkern-3mu\noexpand{\unslant{\textstyle\slantpartial}}\kern-1.2pt}
+\newcommand{\scriptpartial}{\mathop{}\mkern-3mu\noexpand{\unslant{\scriptstyle\slantpartial}}\kern-1.2pt}
+\newcommand{\scriptscriptpartial}{\mathop{}\mkern-3mu\noexpand{\unslant{\scriptscriptstyle\slantpartial}}\kern-1.2pt}
+\renewcommand{\partial}{\mathchoice{\displaypartial}{\normalpartial}{\scriptpartial}{\scriptscriptpartial}}
+
 \newcommand{\resetpartial}{\let\partial\slantpartial}
 
 
