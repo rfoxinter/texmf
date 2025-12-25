@@ -1,0 +1,50 @@
+%%
+%% This is file `ubbmtss.fd',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% bbmt.dtx  (with options: `bbmtss')
+%% 
+%% Copyright (C) 1994,1997 by Torsten Hilbrich
+%% 
+%% This file is part of the bbmt package, a support for using the bbmt* fonts.
+\def\fileversion{1.2}
+\def\filedate{1999/03/15}
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+\ProvidesFile{ubbmtss.fd}[\filedate\space V\space\fileversion
+                         \space Font definition for bbmtss font - TH]
+\DeclareFontFamily{U}{bbmtss}{}
+\DeclareFontShape{U}{bbmtss}{m}{n}
+   {  <5> <6> <7> bbmtss8%
+      <8> <9> <10> <12> gen * bbmtss
+      <10.95> bbmtss10%
+      <14.4> bbmtss12%
+      <17.28> <20.74> <24.88> bbmtss17}{}
+\DeclareFontShape{U}{bbmtss}{m}{it}
+   {  <5> <6> <7> bbmtssi8%
+      <8> <9> <10> <12> gen * bbmtssi
+      <10.95> bbmtssi10%
+      <14.4> bbmtssi12%
+      <17.28> <20.74> <24.88> bbmtssi17}{}
+\DeclareFontShape{U}{bbmtss}{bx}{n}
+   {  <5> <6> <7> <8> <9> <10> <10.95> <12> <14.4> <17.28>%
+      <20.74> <24.88> bbmtssbx10}{}
+
+\endinput
+%%
+%% End of file `ubbmtss.fd'.
