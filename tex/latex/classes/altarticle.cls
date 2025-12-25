@@ -2451,7 +2451,7 @@ space before arrow={0.2ex},
 \let\otimes\varotimes
 \newcommand{\gl}[1]{\oldgl\l#1\r}
 \let\olddim\dim
-\renewcommand{\dim}[1]{\olddim\l#1\r}
+\renewcommand{\dim}[2][]{\olddim_{#1}\l#2\r}
 \DeclareMathOperator{\oldrg}{rg}
 \newcommand{\rg}[1]{\oldrg\l#1\r}
 \DeclareMathOperator{\oldtr}{tr}
@@ -2471,8 +2471,12 @@ space before arrow={0.2ex},
 \DeclareMathOperator{\id}{id}
 \DeclareMathOperator{\olddiscr}{discr}
 \newcommand{\discr}[2][]{\olddiscr_{#1}\l#2\r}
-\newcommand{\appl}[5]{\begin{array}[t]{@{}r@{}r@{}c@{}l@{}}#1\!:\!{}&#2&{}\longrightarrow{}&#3\\&#4&{}\longmapsto{}&#5\end{array}}
-\newcommand{\nappl}[4]{\begin{array}[t]{@{}r@{}c@{}l@{}}#1&{}\longrightarrow{}&#2\\#3&{}\longmapsto{}&#4\end{array}}
+\newcommand{\appl}{\altarticle@comparestring{\analysedisplay}{}{\textappl}{\dispappl}}
+\newcommand{\dispappl}[5]{\begin{array}[t]{@{}r@{}r@{}c@{}l@{}}#1\!:\!{}&#2&{}\longrightarrow{}&#3\\&#4&{}\longmapsto{}&#5\end{array}}
+\newcommand{\textappl}[5]{#1\!:\!#2\to#3\text{, }#4\mapsto#5}
+\newcommand{\nappl}{\altarticle@comparestring{\analysedisplay}{}{\textnappl}{\dispnappl}}
+\newcommand{\dispnappl}[4]{\begin{array}[t]{@{}r@{}c@{}l@{}}#1&{}\longrightarrow{}&#2\\#3&{}\longmapsto{}&#4\end{array}}
+\newcommand{\textnappl}[4]{#1\to#2\text{, }#3\mapsto#4}
 %% Analyse
 \def\analyseleftp{\l}
 \def\analyserightp{\r}
