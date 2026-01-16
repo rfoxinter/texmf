@@ -78,6 +78,7 @@
 \tikzset{arrow style/.style={->=latex,shorten >=2pt, shorten <=2pt}}
 \setcounter{tocdepth}{6}
 \renewcommand{\ttdefault}{cmtl}
+\DeclareEmphSequence{\slshape}
 
 
 
@@ -128,6 +129,8 @@
         \printlist{publisher}%
         \setunit{\addcomma\space}%
         \printfield{year}%
+        \setunit{\addcomma\space}%
+        \printfield{note}%
         \setunit{\addperiod}%
         \finentry
         }
@@ -149,6 +152,8 @@
         \printfield{pages}%
         \setunit{\addcomma\space}%
         \printfield{year}%
+        \setunit{\addcomma\space}%
+        \printfield{note}%
         \setunit{\addperiod}%
         \finentry
         }
@@ -163,11 +168,11 @@
         \setunit{\addcomma\space}%
         \printfield{howpublished}%
         \setunit{\addcomma\space}%
+        \printfield{year}%
+        \setunit{\addcomma\space}%
         \printfield{note}%
         \setunit{\addcomma\space}%
         \printfield{url}%
-        \setunit{\addcomma\space}%
-        \printfield{year}%
         \setunit{\addperiod}%
         \finentry
         }
@@ -549,6 +554,31 @@
 \let\subset\subseteq
 \let\varsupset\supset
 \let\supset\supseteq
+\newcommand\subopn{\mathrel{\opncls@{\circ}}}
+\newcommand\subcls{\mathrel{\opncls@{\bullet}}}
+\newcommand{\opncls@}[1]{%
+    \vphantom{\subseteq}% to fix the bounding box
+    \mathpalette\opncls@@{#1}%
+}
+\newcommand{\opncls@@}[2]{%
+    \ooalign{$\m@th#1\subseteq$\cr
+    \hidewidth\opncls@fix{#1}\hbox{$\m@th#1#2\mkern2mu$}\cr}}
+
+\newcommand\opncls@fix[1]{%
+    \ifx#1\displaystyle
+        \raise.225ex
+    \else
+        \ifx#1\textstyle
+            \raise.225ex
+        \else
+            \ifx#1\scriptstyle
+                \raise.180ex
+            \else
+                \raise.150ex
+            \fi
+        \fi
+    \fi
+}
 %% Arrows
 \newsavebox{\actstobox}
 \newlength{\myhh}
