@@ -135,6 +135,29 @@
         \finentry
         }
 
+        \DeclareBibliographyDriver{inbook}{%
+        \usebibmacro{bibindex}%
+        \usebibmacro{begentry}%
+        \printnames{author}%
+        \setunit{\addcolon\space}%
+        \newblock
+        \printfield{title}%
+        \setunit{\addcomma\space\bibstring{in}\space}%
+        \printfield{booktitle}%
+        \setunit{\addcomma\space}%
+        \printfield{edition}%
+        \setunit{\addcomma\space\bibstring{byeditor}\space}%
+        \printnames{editor}%
+        \setunit{\addcomma\space}%
+        \printfield{series}%
+        \setunit{\addcomma\space}%
+        \printlist{publisher}%
+        \setunit{\addcomma\space}%
+        \printfield{year}%
+        \setunit{\addperiod}%
+        \finentry
+        }
+
         \DeclareBibliographyDriver{article}{%
         \usebibmacro{bibindex}%
         \usebibmacro{begentry}%
