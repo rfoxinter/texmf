@@ -19,11 +19,14 @@
 %%% Import packages and options
 \LoadClass[a4paper]{article}
 \usepackage[utf8]{inputenc}
+\usepackage[safe]{tipa}
+\usepackage{tipx}
+\usepackage[T2A,T1]{fontenc}
 \usepackage{babel}
-\usepackage[T1]{fontenc}
 \usepackage{fix-cm}
 \usepackage{geometry}
-\usepackage{amsmath, amsfonts, amssymb, stmaryrd}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage[heavycircles]{stmaryrd}
 \SetSymbolFont{stmry}{bold}{U}{stmry}{m}{n}
 \let\@BeginDoc\AtBeginDocument
 \def\AtBeginDocument#1{#1}
@@ -37,7 +40,7 @@
 \let\oldurl\url
 \renewcommand{\url}[1]{{\color{blue}\oldurl{#1}}}
 \usepackage{etoolbox}
-\usepackage{microtype}
+\usepackage[nopatch=footnote]{microtype}
 \DisableLigatures{encoding = OML}
 \usepackage{framed}
 \usepackage{graphicx}
@@ -332,6 +335,16 @@
 \apptocmd{\boldmath}{\def\toggleboldmath{true}}{}{}
 \apptocmd{\unboldmath}{\def\toggleboldmath{false}}{}{}
 \def\convertto#1#2{\strip@pt\dimexpr #2*65536/\number\dimexpr 1#1} % eg: \convertto{pt}{1em}pt
+\ExplSyntaxOn
+\cs_new_protected:Npn \ndetokenize #1
+  {
+    \tl_set:Nn \l_tmpa_tl {#1}
+    \regex_replace_all:nnN { . } { \c{string} \0 } \l_tmpa_tl
+    \tl_set:Nx \l_tmpb_tl { \l_tmpa_tl }
+    % now \l_tmpb_tl contains what you want:
+    \tl_use:N \l_tmpb_tl
+  }
+\ExplSyntaxOff
 
 
 
@@ -399,6 +412,7 @@
 \newlength\bshft
 \bshft=.18pt\relax
 \DeclareRobustCommand\fakebold[1]{\setbox0=\hbox{$#1$}#1\kern-\wd0\kern\bshft#1\kern-\wd0\kern\bshft#1}
+\DeclareRobustCommand\ffakebold[1]{\setbox0=\hbox{$#1$}#1\kern-\wd0\raise\bshft\hbox{$#1$}\kern-\wd0\lower\bshft\hbox{$#1$}\kern-\wd0\kern\bshft#1\kern-\wd0\raise\bshft\hbox{$#1$}\kern-\wd0\lower\bshft\hbox{$#1$}\kern-\wd0\kern\bshft#1\kern-\wd0\raise\bshft\hbox{$#1$}\kern-\wd0\lower\bshft\hbox{$#1$}}
 %% Unslant
 \newcommand{\slantbox}[2][-.25]{\kern-.125em%
     \begin{tikzpicture}[outer sep=0, inner sep=0]%
@@ -412,7 +426,7 @@
 \newcommand{\greekslantbox}[1]{\mbox{%
     \sbox{\foobox}{#1}%
     \foodim=-.25\wd\foobox%
-    \hskip \wd\foobox%
+    %\hskip \wd\foobox%
     \hskip -.5\foodim%
     \slantbox{\usebox{\foobox}}%
     \hskip .5\foodim%
@@ -503,6 +517,143 @@
     \let\Omega\varOmega
     \let\slantepsilon\epsilon
 \fi
+%% Roman greek lowercase
+\newcommand{\makeroman}[2]{%
+    \expandafter\def\csname rm#1\endcsname{{%
+        \altarticle@comparestring{\toggleboldmath}{true}%
+            {\mathalpha{\text{\textbf{#2}}}}%
+            {\mathalpha{\text{#2}}}%
+    }}%
+}
+\makeroman{alpha}{\textipa{A}}
+\makeroman{beta}{\textipa{B}}
+\makeroman{gamma}{\textipa{G}}
+\makeroman{delta}{...}
+\makeroman{epsilon}{\textipa{E}}
+\makeroman{zeta}{...}
+\makeroman{eta}{\textipa{\textnrleg}}
+\makeroman{theta}{\texttheta}
+\makeroman{iota}{\textiota}
+\makeroman{kappa}{\foreignlanguage{russian}{к}}
+\makeroman{lambda}{\textlambda} %
+\makeroman{mu}{µ}
+\makeroman{nu}{\textscriptv}
+\makeroman{xi}{...}
+\makeroman{omicron}{\foreignlanguage{russian}{o}}
+\makeroman{oldpi}{\foreignlanguage{russian}{п}}
+\makeroman{rho}{\foreignlanguage{russian}{р}}
+\makeroman{sigma}{...}
+\makeroman{tau}{\foreignlanguage{russian}{т}}
+\makeroman{upsilon}{\textupsilon}
+\makeroman{phi}{...}
+\makeroman{chi}{\textchi} %
+\makeroman{psi}{...}
+\makeroman{omega}{\textomega}
+\makeroman{varepsilon}{...}
+\makeroman{vartheta}{...}
+\makeroman{varpi}{...}
+\makeroman{varrho}{...}
+\makeroman{varsigma}{...}
+\makeroman{varphi}{\textphi}
+\newcommand{\normalrmpi}{%
+    \mathchoice%
+        {\@nrmpi}%
+        {\@nrmpi}%
+        {\@srmpi}%
+        {\@ssrmpi}%
+}
+\newcommand{\@nrmpi}{%
+    \mathalpha{%
+        \mkern2.5mu%
+        \smash{%
+            \overline{%
+                \raisebox{0pt}[\dimexpr\totalheight-.025ex-4\fontdimen8\textfont3\relax]{%
+                    $\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
+                }%
+            }%
+        }%
+        \mkern2.5mu%
+        \vphantom{\rmoldpi}%
+    }%
+}
+\newcommand{\@srmpi}{%
+    \mathalpha{%
+        \mkern2.5mu%
+        \smash{%
+            \overline{%
+                \raisebox{0pt}[\dimexpr\totalheight-.025ex-4\fontdimen8\scriptfont3\relax]{%
+                    $\scriptstyle\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
+                }%
+            }%
+        }%
+        \mkern2.5mu%
+        \vphantom{\rmoldpi}%
+    }%
+}
+\newcommand{\@ssrmpi}{%
+    \mathalpha{%
+        \mkern2.5mu%
+        \smash{%
+            \overline{%
+                \raisebox{0pt}[\dimexpr\totalheight-.025ex-4\fontdimen8\scriptscriptfont3\relax]{%
+                    $\scriptscriptstyle\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
+                }%
+            }%
+        }%
+        \mkern2.5mu%
+        \vphantom{\rmoldpi}%
+    }%
+}
+\newcommand{\boldrmpi}{%
+    \mathchoice
+        {\@bnrmpi}%
+        {\@bnrmpi}%
+        {\@bsrmpi}%
+        {\@bssrmpi}%
+}
+\newcommand{\@bnrmpi}{%
+    \mathalpha{%
+        \mkern2.5mu%
+        \smash{%
+            \overline{%
+                \raisebox{0pt}[\dimexpr\totalheight-.025ex-6.5\fontdimen8\scriptscriptfont3\relax]{%
+                    $\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
+                }%
+            }%
+        }%
+        \mkern2.5mu%
+        \vphantom{\rmoldpi}%
+    }%
+}
+\newcommand{\@bsrmpi}{%
+    \mathalpha{%
+        \mkern2.5mu%
+        \smash{%
+            \overline{%
+                \raisebox{0pt}[\dimexpr\totalheight-.025ex-5.25\fontdimen8\scriptscriptfont3\relax]{%
+                    $\scriptstyle\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
+                }%
+            }%
+        }%
+        \mkern2.5mu%
+        \vphantom{\rmoldpi}%
+    }%
+}
+\newcommand{\@bssrmpi}{%
+    \mathalpha{%
+        \mkern2.5mu%
+        \smash{%
+            \overline{%
+                \raisebox{0pt}[\dimexpr\totalheight-.025ex-4\fontdimen8\scriptscriptfont3\relax]{%
+                    $\scriptscriptstyle\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
+                }%
+            }%
+        }%
+        \mkern2.5mu%
+        \vphantom{\rmoldpi}%
+    }%
+}
+\def\rmpi{{\altarticle@comparestring{\toggleboldmath}{true}{\boldrmpi}{\normalrmpi}}}
 %% Slant latin letters
 \DeclareSymbolFont{uilatin}{T1}{cmr}{m}{ui}
 \ifaltarticle@unslantlatin
@@ -561,9 +712,6 @@
     \DeclareMathSymbol{Y}{\mathalpha}{uilatin}{`Y}
     \DeclareMathSymbol{Z}{\mathalpha}{uilatin}{`Z}
 \fi
-%% Circled operators
-\let\oplus\varoplus
-\let\otimes\varotimes
 %% Under/Overbrace
 \def\altunderbrace#1#2#3#4{\left#1\vphantom{#2}\smash{\underbrace{#2}_{#3}}\right#4\vphantom{\underbrace{#2}_{#3}}}
 \def\altoverbrace#1#2#3#4{\left#1\vphantom{#2}\smash{\overbrace{#2}_{#3}}\right#4\vphantom{\overbrace{#2}_{#3}}}
@@ -615,6 +763,7 @@
     \edef\mulen{\convertto{1pt}{1em}pt}%
     \mathrel{\begin{tikzpicture}[baseline=-.85ex]\draw[-{>[length=.25em,width=1.25*\the\myhh]},line cap=round,line width=.085ex,smooth] (0,1/9em) to[out=50,in=130] ($(\the\myww,-.005)+(-\mulen,0)$);\end{tikzpicture}}%
 }
+\newcommand{\dashto}{\mathrel{-\mkern-6mu{\to}\mkern-22.5mu{\text{\color{white}\boldmath${\cdot}{\cdot}{\cdot}$}}\mkern1mu\phantom{.}}}
 %% Textstyle align
 \newenvironment{tflalign*}
     {\let\olddisplaystyle\displaystyle\let\displaystyle\textstyle\csname flalign*\endcsname}
@@ -1799,6 +1948,8 @@ end={\rightarrow},
 space after arrow={0.2ex},
 space before arrow={0.2ex},
 }
+\let\oldvec\vec
+\let\oldoverrightarrow\vec
 \let\vec\newarrow
 \let\overrightarrow\newarrow
 
@@ -1862,6 +2013,19 @@ space before arrow={0.2ex},
         \def\opabove{\bigoplimits^{#2}}
     \fi
     {\bigopdisplay\oldprod\opbelow\opabove}\mkern-3mu{}\mathop{}\bigopleftp#3\bigoprightp}
+\let\oldcoprod\coprod
+\renewcommand\coprod[3]{\mathop{}\mkern-3mu
+    \if\relax\detokenize{#1}\relax
+        \def\opbelow{}
+    \else
+        \def\opbelow{\bigoplimits_{#1}}
+    \fi
+    \if\relax\detokenize{#2}\relax
+        \def\opabove{}
+    \else
+        \def\opabove{\bigoplimits^{#2}}
+    \fi
+    {\bigopdisplay\oldcoprod\opbelow\opabove}\mkern-3mu{}\mathop{}\bigopleftp#3\bigoprightp}
 \let\oldcap\bigcap
 \renewcommand\bigcap[3]{\mathop{}\mkern-3mu
     \if\relax\detokenize{#1}\relax
@@ -1927,9 +2091,41 @@ space before arrow={0.2ex},
         \def\opabove{\bigoplimits^{#2}}
     \fi
     {\bigopdisplay\oldbigoplus\opbelow\opabove}\mkern-3mu{}\mathop{}\bigopleftp#3\bigoprightp}
+\let\oldbigwedge\bigwedge
+\renewcommand\bigwedge[3]{\mathop{}\mkern-3mu
+    \if\relax\detokenize{#1}\relax
+        \def\opbelow{}
+    \else
+        \def\opbelow{\bigoplimits_{#1}}
+    \fi
+    \if\relax\detokenize{#2}\relax
+        \def\opabove{}
+    \else
+        \def\opabove{\bigoplimits^{#2}}
+    \fi
+    {\bigopdisplay\oldbigwedge\opbelow\opabove}\mkern-3mu{}\mathop{}\bigopleftp#3\bigoprightp}
+\let\oldbigvee\bigvee
+\renewcommand\bigvee[3]{\mathop{}\mkern-3mu
+    \if\relax\detokenize{#1}\relax
+        \def\opbelow{}
+    \else
+        \def\opbelow{\bigoplimits_{#1}}
+    \fi
+    \if\relax\detokenize{#2}\relax
+        \def\opabove{}
+    \else
+        \def\opabove{\bigoplimits^{#2}}
+    \fi
+    {\bigopdisplay\oldbigvee\opbelow\opabove}\mkern-3mu{}\mathop{}\bigopleftp#3\bigoprightp}
+\let\altboxplus\boxplus
+\let\altboxminus\boxminus
+\mathchardef\tmpboxplus=\numexpr \altboxplus-"2000\relax
+\def\boxplus{\mathbin{\mathop{\tmpboxplus}}}
+\mathchardef\tmpboxminus=\numexpr \altboxminus-"2000\relax
+\def\boxminus{\mathbin{\mathop{\tmpboxminus}}}
 \DeclareRobustCommand\makebigop[2][1]{\mathop{\vphantom{\oldsum}\mathpalette\bigop@{{#1}{#2}}}\slimits@}
 \newcommand{\bigop@}[2]{\bigop@@#1#2}
-\newcommand{\bigop@@}[3]{\vcenter{\sbox\z@{$#1\oldsum$}\hbox{\resizebox{#2\dimexpr\ht\z@+\dp\z@}{!}{$\m@th#3$}}}}
+\newcommand{\bigop@@}[3]{\vcenter{\sbox\z@{$#1\oldsum$}\hbox{\resizebox{#2\dimexpr\ht\z@+\dp\z@}{!}{$#1\m@th#3$}}}}
 \newcommand\makebigopcommand[3][1]{%
     \expandafter\let\csname #3symb\endcsname\relax
     \expandafter\let\csname #3\endcsname\relax
@@ -1950,6 +2146,7 @@ space before arrow={0.2ex},
         {\bigopdisplay\csname #3symb\endcsname\opbelow\opabove}\mkern-3mu{}\mathop{}\bigopleftp##3\bigoprightp%
     }%
 }
+\makebigopcommand[1.1]{\mathchoice{\altboxplus}{\bshft=.1pt\relax\ffakebold{{{\altboxplus}}}}{\bshft=.0225pt\relax\ffakebold{{{\scriptstyle\altboxplus}}}}{\bshft=.005pt\relax\ffakebold{{{\scriptscriptstyle\altboxplus}}}}}{}{}{}
 \makebigopcommand{\mathcal K}{fracK}
 %% Arithmetique
 \def\mmod#1{\mathchoice{\ }{\ }{}{}\lc#1\rc}
@@ -1961,12 +2158,19 @@ space before arrow={0.2ex},
     \kern.5\p@}\hfil
   \kern-#2\p@
   }}
-\def\@legendre#1#2#3#4#5{\mathopen{}\left(\kern-1.5pt
+\def\@legendre#1#2#3#4#5{\mathopen{}\left(
   \sbox\z@{$\genfrac{}{}{0pt}{#1}{#3#4}{#3#5}$}%
   \dimen@=\wd\z@
   \kern-\p@\vcenter{\box0}\kern-\dimen@\vcenter{\legendre@dash\dimen@{#2}}\kern-\p@
-  \kern-1.5pt\right)\mathclose{}}
-\newcommand\legendre[2]{\mathchoice
+  \right)\mathclose{}}
+\newcommand\legendre{\altarticle@comparestring{\analysedisplay}{}{\altlegendre}{\dlegendre}}
+\newcommand\dlegendre[2]{\mathchoice
+  {\@legendre{0}{1}{}{#1}{#2}}
+  {\@legendre{0}{1}{}{#1}{#2}}
+  {\@legendre{2}{0}{\vphantom{1}}{#1}{#2}}
+  {\@legendre{3}{0}{\vphantom{1}}{#1}{#2}}
+}
+\newcommand\altlegendre[2]{\mathchoice
   {\@legendre{0}{1}{}{#1}{#2}}
   {\@legendre{2}{0}{\vphantom{1}}{#1}{#2}}
   {\@legendre{2}{0}{\vphantom{1}}{#1}{#2}}
@@ -2018,6 +2222,7 @@ space before arrow={0.2ex},
     \fi{#2}\egargI#3
 }
 %% Complexes
+\let\oldbar\bar
 \renewcommand{\bar}{\overline}
 \DeclareMathOperator{\olde}{e}
 \newcommand{\e}{{\olde}}
@@ -2053,6 +2258,21 @@ space before arrow={0.2ex},
 \newcommand{\degins}[2][]{\olddegins_{#1}\l#2\r}
 \DeclareMathOperator{\olddegpi}{deg\,p{.}i{.}}
 \newcommand{\degpi}[2][]{\olddegpi_{#1}\l#2\r}
+%% Geometrie
+
+\DeclareMathOperator{\oldtg}{T}
+\def\tg{{\oldtg}}
+\DeclareMathOperator{\oldder}{Der}
+\def\Der#1{\oldder\l#1\r}
+\newcommand{\ext}[2][]{\mathop{}\mkern-3mu\raisebox{1.125pt}{$\let\bigopdisplay\textstyle\makebigop[.7]{\operatorname{\upLambda}}\!^{#1}$}#2}
+\newcommand{\pext}[2][]{\mathop{}\mkern-3mu\raisebox{1.125pt}{$\let\bigopdisplay\textstyle\makebigop[.7]{\operatorname{\upLambda}}\!^{#1}$}\l#2\r}
+\newcommand{\symalg}[2][]{\mathop{}\mkern-3mu\raisebox{1.25pt}{$\let\bigopdisplay\textstyle\makebigop[.6]{\operatorname{S}}\!^{#1}$}#2}
+\newcommand{\psymalg}[2][]{\mathop{}\mkern-3mu\raisebox{1.25pt}{$\let\bigopdisplay\textstyle\makebigop[.6]{\operatorname{S}}\!^{#1}$}\l#2\r}
+\DeclareMathOperator{\oldalt}{A}
+\newcommand{\falt}[2][]{\oldalt_{#1}\l#2\r}
+\let\upGamma\Gamma
+\newcommand{\cv}[2]{{\operatorname{\upGamma}}\l#1,#2\r}
+\newcommand{\fd}[2][]{\upOmega^{#1}\l#2\r}
 %% Hats
 \newcommand{\arc}[1]{\mathpalette\arc@arc{#1}\!}
 \newcommand{\arc@arc}[2]{
@@ -2064,11 +2284,21 @@ space before arrow={0.2ex},
         \box0
     }
 }
-\renewcommand{\hat}[1]{\mathpalette\hat@hat{#1}\sbox0{$\m@th#1$}\hspace{-0.375\wd0}}
+\newcommand{\hhat}[1]{\mathpalette\hat@hat{#1}\sbox0{$\m@th#1$}\hspace{-0.375\wd0}}
 \newcommand{\hat@hat}[2]{
     \sbox0{$\m@th#1#2$}
     \vbox{
         \hbox{\hspace{-0.375\wd0}\resizebox{1.75\wd0}{\height}{$\string^$}}
+        \nointerlineskip
+        \vspace{-5pt}
+        \box0
+    }
+}
+\newcommand{\ccheck}[1]{\mathpalette\check@check{#1}\sbox0{$\m@th#1$}\hspace{-0.25\wd0}}
+\newcommand{\check@check}[2]{
+    \sbox0{$\m@th#1#2$}
+    \vbox{
+        \hbox{\hspace{-0.25\wd0}\resizebox{2.5\wd0}{\height}{\v{\ }}\hspace{-\wd0}}
         \nointerlineskip
         \vspace{-5pt}
         \box0
@@ -2080,7 +2310,7 @@ space before arrow={0.2ex},
 \let\olddeg\deg
 \renewcommand{\deg}[1]{\olddeg\l#1\r}
 \DeclareMathOperator{\oldval}{val}
-\newcommand{\val}[1]{\oldval\l#1\r}
+\newcommand{\val}[2][]{\oldval_{#1}\l#2\r}
 \DeclareMathOperator{\oldcar}{car}
 \newcommand{\car}[1]{\oldcar\l#1\r}
 \DeclareMathOperator{\oldrac}{rac}
@@ -2095,7 +2325,7 @@ space before arrow={0.2ex},
 }
 \newcommand{\sq}{\;\middle|\;}
 \newcommand\bor{\mathcal B}
-\newcommand{\esp}[1]{\operatorname{\mathbb E}\l#1\r}
+\newcommand{\esp}[2][]{\operatorname{\mathbb E}_{#1}\l#2\r}
 \newcommand{\var}[1]{\operatorname{\mathbb V}\l#1\r}
 \newcommand{\ect}[1]{\operatorname{\sigma}\l#1\r}
 \DeclareMathOperator{\oldcov}{cov}
@@ -2315,7 +2545,8 @@ space before arrow={0.2ex},
 \end{tikzpicture}}
 \newcommand\smalltmatrix[1][]{\tmatrix[#1][minimum height = 0ex, row sep = .5ex, minimum width = 0ex, column sep = 1ex, inner sep = 0ex, nodes={anchor=base, execute at begin node=\scriptstyle},]}
 \newcommand\crampedtmatrix[1][]{\tmatrix[#1][minimum height = 0ex, row sep = .5ex, minimum width = 0ex, column sep = 1ex, inner sep = 0ex, nodes={anchor=base},]}
-\newcommand{\tcase}[1][]{\def\tmatargI{#1}\tmptcase}
+\newcommand\sctmatrix{\if@bigopdisplay\expandafter\crampedtmatrix\else\expandafter\smalltmatrix\fi}
+\newcommand{\tcase}[1][]{\def\tmatargI{#1}\if@bigopdisplay\expandafter\tmpdtcase\else\expandafter\tmptcase\fi}
 \newcommand{\tmptcase}[2][]{
 \kern-.2em\begin{tikzpicture}[every left delimiter/.style={xshift=.2em},every right delimiter/.style={xshift=-.125em},baseline={([yshift=-0.5ex]m.center)}]
     \matrix (m) [
@@ -2329,7 +2560,28 @@ space before arrow={0.2ex},
         anchor=center,
         minimum width=0pt,
         minimum height=0pt,
-        row sep=1pt,
+        row sep=.5ex,
+        column sep=1ex,
+        inner sep=0pt,
+        nodes in empty cells,
+        #1
+    ] {#2};
+    \tmatargI
+\end{tikzpicture}}
+\newcommand{\tmpdtcase}[2][]{
+\kern-.2em\begin{tikzpicture}[every left delimiter/.style={xshift=.2em},every right delimiter/.style={xshift=-.125em},baseline={([yshift=-0.5ex]m.center)}]
+    \matrix (m) [
+        ampersand replacement=\&,
+        nodes={anchor=west, execute at begin node=$,%
+            execute at end node=$%
+        },
+        matrix of nodes,
+        left delimiter=\{,
+        right delimiter={.\kern-\nulldelimiterspace},
+        anchor=center,
+        minimum width=0pt,
+        minimum height=0pt,
+        row sep=.5ex,
         column sep=1ex,
         inner sep=0pt,
         nodes in empty cells,
@@ -2500,8 +2752,6 @@ space before arrow={0.2ex},
 \DeclareMathOperator{\oldvect}{Vect}
 \newcommand{\vect}[1]{\oldvect\l#1\r}
 \newcommand{\al}[3][]{\def\alargII{,#3}\if\relax\detokenize{#3}\relax\def\alargII{}\fi\mathcal{L}_{#1}\l#2\alargII\r}
-\let\oplus\varoplus
-\let\otimes\varotimes
 \newcommand{\gl}[1]{\oldgl\l#1\r}
 \let\olddim\dim
 \renewcommand{\dim}[2][]{\olddim_{#1}\l#2\r}
@@ -2519,6 +2769,8 @@ space before arrow={0.2ex},
 \newcommand{\so}[2][]{\oldso_{#1}\l#2\r}
 \DeclareMathOperator{\oldsym}{S}
 \newcommand{\alsym}[2][]{\oldsym^{#1}\l#2\r}
+\DeclareMathOperator{\oldalant}{A}
+\newcommand{\alant}[2][]{\oldalant^{#1}\l#2\r}
 \DeclareMathOperator{\oldsp}{sp}
 \renewcommand{\sp}[2][]{\oldsp_{#1}\l#2\r}
 \DeclareMathOperator{\id}{id}
@@ -2553,6 +2805,30 @@ space before arrow={0.2ex},
 
 \newcommand{\resetpartial}{\let\partial\slantpartial}
 
+\newcommand{\dalembertian}{\mathop{\mathpalette\dalembertian@\relax}}
+\newcommand{\dalembertian@}[2]{%
+  \begingroup
+  \sbox\z@{$\m@th#1\square$}%
+  \dimen0=\fontdimen8
+    \ifx#1\displaystyle\textfont\else
+    \ifx#1\textstyle\textfont\else
+    \ifx#1\scriptstyle\scriptfont\else
+    \scriptscriptfont\fi\fi\fi3
+  \makebox[\wd\z@]{%
+    \hbox to \ht\z@{%
+      \vrule width \dimen0
+      \kern-\dimen0
+      \vbox to \ht\z@{
+        \hrule height \dimen0 width \ht\z@
+        \vss
+        \hrule height 2\dimen0
+      }%
+      \kern-2.5\dimen0
+      \vrule width 2.5\dimen0
+    }%
+  }%
+  \endgroup
+}
 
 \newcounter{mpdercount}
 \def\mpderden{}
@@ -2584,8 +2860,8 @@ space before arrow={0.2ex},
 }
 \newcommand{\scanaltintlist}[1]{
     \foreach \elem in {#1} {
-        \altarticle@comparestring{\arabic{altintvarindex}}{0}{\xdef\altintspacevars{\unexpanded\expandafter{\altintspacevars}\noexpand\intd\noexpand\elem}}{\xdef\altintspacevars{\unexpanded\expandafter{\altintspacevars}\noexpand\dd\noexpand\elem}}
-        \xdef\altintvars{\unexpanded\expandafter{\altintvars}\noexpand\dd\noexpand\elem}
+        \altarticle@comparestring{\arabic{altintvarindex}}{0}{\xdef\altintspacevars{\unexpanded\expandafter{\altintspacevars}\noexpand\intd\noexpand{\elem}}}{\xdef\altintspacevars{\unexpanded\expandafter{\altintspacevars}\noexpand\dd\noexpand{\elem}}}
+        \xdef\altintvars{\unexpanded\expandafter{\altintvars}\noexpand\dd\noexpand{\elem}}
         \setcounter{altintvarindex}{1}
     }
 }
@@ -2675,6 +2951,16 @@ space before arrow={0.2ex},
 \newcommand{\va}[1]{\oldva\l#1\r}
 \DeclareMathOperator{\oldepi}{Epi}
 \newcommand{\epi}[1]{\oldepi\l#1\r}
+%% Analyse complexe
+\DeclareMathOperator{\oldres}{Res}
+\newcommand{\res}[2]{\oldres_{#1}\l#2\r}
+\newcommand{\altres}[1]{\oldres\l#1\r}
+\DeclareMathOperator{\oldDiv}{Div}
+\newcommand{\Div}[2][]{\oldDiv^{#1}\l#2\r}
+\DeclareMathOperator{\oldfdiv}{div}
+\newcommand{\fdiv}[1]{\oldfdiv\l#1\r}
+\DeclareMathOperator{\oldpic}{Pic}
+\newcommand{\pic}[2][]{\oldpic^{#1}\l#2\r}
 %% Dsft
 \usepackage{dsft}
 % \let\star\relax
