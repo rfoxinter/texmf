@@ -47,14 +47,18 @@
 \usepackage{csquotes}
 \usepackage{enumitem}
 \let\propenumerate\relax
-\newlist{propenumerate}{enumerate}{10}
 \newcommand{\itemnb}[1]{(\oldstylenums{#1})}
-\setlist[propenumerate]{leftmargin=0.075\linewidth,topsep=0pt,nosep,label=\itemnb{\arabic*},beginpenalty=999}
+\newlist{propenumerate}{enumerate}{10}
+\setlist[propenumerate]{leftmargin=0.075\enumlinewidth,topsep=0pt,nosep,label=\itemnb{\arabic*},beginpenalty=999}
+\newlist{propitemize}{itemize}{10}
+\setlist[propitemize]{leftmargin=0.075\enumlinewidth,topsep=0pt,nosep,label=$\to{}$,beginpenalty=999}
 \setlist[enumerate]{topsep=0pt,nosep,label=\itemnb{\arabic*}}
 \setlist[itemize]{topsep=0pt,nosep,label=$\to$}
 \let\prvitemize\relax
 \newlist{prvitemize}{itemize}{10}
 \setlist[prvitemize]{topsep=0pt,nosep,leftmargin=*,labelsep=0pt,label=$\to{}$}
+\newlist{prvenumerate}{enumerate}{10}
+\setlist[prvenumerate]{topsep=0pt,nosep,leftmargin=*,labelsep=0pt,label=\itemnb{\arabic*},beginpenalty=999}
 \usepackage{multicol}
 \setlength\multicolsep{0pt}
 \BeforeBeginEnvironment{multicols}{\par\vphantom{Ip}\vspace{-\baselineskip}}
@@ -81,7 +85,10 @@
 \tikzset{arrow style/.style={->=latex,shorten >=2pt, shorten <=2pt}}
 \setcounter{tocdepth}{6}
 \renewcommand{\ttdefault}{cmtl}
+\DeclareMathAlphabet{\mathsfl}{OT1}{cmbr}{m}{n}
+\DeclareMathAlphabet{\mathsbfl}{OT1}{cmbr}{bx}{n}
 \DeclareEmphSequence{\slshape}
+\usepackage{dsft}
 
 
 
@@ -271,12 +278,14 @@
 
 
 %%% General commands
+\def\cleardoublepage{\clearpage\ifodd\c@page\else\hbox{}\newpage\if@twocolumn\hbox{}\newpage\fi\fi}
 \newcommand{\gettikzxy}[3]{%
     \tikz@scan@one@point\pgfutil@firstofone#1\relax
     \edef#2{\the\pgf@x}%
     \edef#3{\the\pgf@y}%
 }
 \DeclareRobustCommand\circled[1]{\tikz[baseline={([yshift=-0.5ex]char.center)}]{\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+\DeclareRobustCommand\boxed[1]{{\tikz[baseline={([yshift=-0.5ex]char.center)}]{\node[shape=rectangle,rounded corners=0.05cm,draw,inner sep=2pt] (char) {#1};}}}
 \let\mathunderline\underline
 \def\underline#1{% 
    \vphantom{#1}\leavevmode\vbox to0pt{\vss 
@@ -416,7 +425,7 @@
 %% Unslant
 \newcommand{\slantbox}[2][-.25]{\kern-.125em%
     \begin{tikzpicture}[outer sep=0, inner sep=0]%
-    \begin{scope}[cm={1,0,-.25,1,(0,0)},baseline=0,outer sep=0, inner sep=0]
+    \begin{scope}[cm={1,0,#1,1,(0,0)},baseline=0,outer sep=0, inner sep=0]
     \node[transform shape] at (0,0) {#2};%
     \end{scope}%
     \end{tikzpicture}%
@@ -555,105 +564,55 @@
 \makeroman{varrho}{...}
 \makeroman{varsigma}{...}
 \makeroman{varphi}{\textphi}
-\newcommand{\normalrmpi}{%
+\newcommand{\rmpi}{{%
     \mathchoice%
         {\@nrmpi}%
         {\@nrmpi}%
         {\@srmpi}%
         {\@ssrmpi}%
-}
+}}
 \newcommand{\@nrmpi}{%
     \mathalpha{%
-        \mkern2.5mu%
+        \mkern2mu%
         \smash{%
             \overline{%
                 \raisebox{0pt}[\dimexpr\totalheight-.025ex-4\fontdimen8\textfont3\relax]{%
-                    $\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
+                    $\mkern-2mu\rmoldpi\mkern-2mu$%
                 }%
             }%
         }%
-        \mkern2.5mu%
+        \mkern2mu%
         \vphantom{\rmoldpi}%
     }%
 }
 \newcommand{\@srmpi}{%
     \mathalpha{%
-        \mkern2.5mu%
+        \mkern2mu%
         \smash{%
             \overline{%
                 \raisebox{0pt}[\dimexpr\totalheight-.025ex-4\fontdimen8\scriptfont3\relax]{%
-                    $\scriptstyle\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
+                    $\scriptstyle\mkern-2mu\rmoldpi\mkern-2mu$%
                 }%
             }%
         }%
-        \mkern2.5mu%
+        \mkern2mu%
         \vphantom{\rmoldpi}%
     }%
 }
 \newcommand{\@ssrmpi}{%
     \mathalpha{%
-        \mkern2.5mu%
+        \mkern2mu%
         \smash{%
             \overline{%
                 \raisebox{0pt}[\dimexpr\totalheight-.025ex-4\fontdimen8\scriptscriptfont3\relax]{%
-                    $\scriptscriptstyle\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
+                    $\scriptscriptstyle\mkern-2mu\rmoldpi\mkern-2mu$%
                 }%
             }%
         }%
-        \mkern2.5mu%
+        \mkern2mu%
         \vphantom{\rmoldpi}%
     }%
 }
-\newcommand{\boldrmpi}{%
-    \mathchoice
-        {\@bnrmpi}%
-        {\@bnrmpi}%
-        {\@bsrmpi}%
-        {\@bssrmpi}%
-}
-\newcommand{\@bnrmpi}{%
-    \mathalpha{%
-        \mkern2.5mu%
-        \smash{%
-            \overline{%
-                \raisebox{0pt}[\dimexpr\totalheight-.025ex-6.5\fontdimen8\scriptscriptfont3\relax]{%
-                    $\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
-                }%
-            }%
-        }%
-        \mkern2.5mu%
-        \vphantom{\rmoldpi}%
-    }%
-}
-\newcommand{\@bsrmpi}{%
-    \mathalpha{%
-        \mkern2.5mu%
-        \smash{%
-            \overline{%
-                \raisebox{0pt}[\dimexpr\totalheight-.025ex-5.25\fontdimen8\scriptscriptfont3\relax]{%
-                    $\scriptstyle\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
-                }%
-            }%
-        }%
-        \mkern2.5mu%
-        \vphantom{\rmoldpi}%
-    }%
-}
-\newcommand{\@bssrmpi}{%
-    \mathalpha{%
-        \mkern2.5mu%
-        \smash{%
-            \overline{%
-                \raisebox{0pt}[\dimexpr\totalheight-.025ex-4\fontdimen8\scriptscriptfont3\relax]{%
-                    $\scriptscriptstyle\mkern-2.5mu\rmoldpi\mkern-2.5mu$%
-                }%
-            }%
-        }%
-        \mkern2.5mu%
-        \vphantom{\rmoldpi}%
-    }%
-}
-\def\rmpi{{\altarticle@comparestring{\toggleboldmath}{true}{\boldrmpi}{\normalrmpi}}}
 %% Slant latin letters
 \DeclareSymbolFont{uilatin}{T1}{cmr}{m}{ui}
 \ifaltarticle@unslantlatin
@@ -1962,6 +1921,8 @@ space before arrow={0.2ex},
     \setlength{\abovedisplayskip}{0pt}
     \setlength{\abovedisplayshortskip}{0pt}
     \setlength{\parindent}{0pt}
+    \newlength\enumlinewidth
+    \setlength{\enumlinewidth}{\linewidth}
 }
 
 
@@ -2961,50 +2922,3 @@ space before arrow={0.2ex},
 \newcommand{\fdiv}[1]{\oldfdiv\l#1\r}
 \DeclareMathOperator{\oldpic}{Pic}
 \newcommand{\pic}[2][]{\oldpic^{#1}\l#2\r}
-%% Dsft
-\usepackage{dsft}
-% \let\star\relax
-% \let\square\relax
-% \let\triangle\relax
-% \pdfmapfile{+dsrm/dsrm.map}
-% \newfont{\dsft}{dsrm/dsrm12}
-% \DeclareFontFamily{U}{dsrm}{}
-% \DeclareFontShape{U}{dsrm}{m}{n}{
-%     <-> dsrm/dsrm12
-% }{}
-% \DeclareSymbolFont{mathds}{U}{dsrm}{m}{n}
-% \DeclareMathAlphabet{\mathds}{U}{dsrm}{m}{n}
-% \newcommand\ind[1]{\mathds{1}_{#1}}
-% \DeclareMathSymbol{\square}{\mathbin}{mathds}{"41}
-% \DeclareMathSymbol{\star}{\mathbin}{mathds}{"42}
-% \DeclareMathSymbol{\triangle}{\mathbin}{mathds}{"43}
-% \newcommand{\filledstar}[1]{%
-%     \ifcase#1\relax%
-%         \ensuremath{\mathds{B}}%
-%     \or\relax%
-%         \ensuremath{\mathds{D}}%
-%     \or\relax%
-%         \ensuremath{\mathds{E}}%
-%     \or\relax%
-%         \ensuremath{\mathds{F}}%
-%     \or\relax%
-%         \ensuremath{\mathds{G}}%
-%     \or\relax%
-%         \ensuremath{\mathds{H}}%
-%     \else%
-%         \hphantom{\ensuremath{\mathds{1}}}
-%     \fi%
-% }
-% \newcommand{\rmbeta}{\ensuremath{\mathds{b}}}
-% \newcommand{\rmepsilon}{\ensuremath{\mathds{e}}}
-% \newcommand{\rmphi}{\ensuremath{\mathds{f}}}
-% \newcommand{\rmgamma}{\ensuremath{\mathds{g}}}
-% \newcommand{\rmiota}{\ensuremath{\mathds{i}}}
-% \newcommand{\rmkappa}{\ensuremath{\mathds{k}}}
-% \newcommand{\rmmu}{\ensuremath{\mathds{m}}}
-% \newcommand{\rmnu}{\ensuremath{\mathds{n}}}
-% \newcommand{\rmomicron}{\ensuremath{\mathds{o}}}
-% \newcommand{\rmpi}{\ensuremath{\mathds{p}}}
-% \newcommand{\rmrho}{\ensuremath{\mathds{r}}}
-% \newcommand{\rmtau}{\ensuremath{\mathds{t}}}
-% \newcommand{\rmvarsigma}{\ensuremath{\mathds{v}}}
