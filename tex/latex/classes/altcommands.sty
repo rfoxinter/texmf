@@ -26,8 +26,10 @@
 \usepackage[nopatch=footnote]{microtype}
 \DisableLigatures{encoding = OML}
 \usepackage{graphicx}
-\usepackage{csquotes}
+\usepackage[french=guillemets]{csquotes}
+\MakeAutoQuote{<}{>}
 \usepackage{tikz}
+\usepackage{tikz-cd}
 % \usepackage{pgffor}
 \usetikzlibrary{calc}
 \usetikzlibrary{arrows}
@@ -35,19 +37,103 @@
 \usetikzlibrary{matrix}
 \usetikzlibrary{fit}
 \usetikzlibrary{babel}
-\usepackage{tkz-tab}
-\tikzset{arrow style/.style={->=latex,shorten >=2pt, shorten <=2pt}}
+\usetikzlibrary{external}
 \usetikzlibrary{nfold}
+\usepackage{tkz-tab}
+\renewcommand{\ttdefault}{cmtl}
+\DeclareMathAlphabet{\mathsfl}{OT1}{cmbr}{m}{n}
+\DeclareMathAlphabet{\mathsbfl}{OT1}{cmbr}{bx}{n}
+\DeclareEmphSequence{\slshape}
+\usepackage{dsft}
+
+
+
+%%% Useful command
+\DeclareRobustCommand\altarticle@comparestring[2]{%
+    \edef\tempa{#1}%
+    \edef\tempb{#2}%
+    \ifx\tempa\tempb%
+        \expandafter\@firstoftwo%
+    \else%
+        \expandafter\@secondoftwo%
+    \fi%
+}
+\DeclareRobustCommand\labelcomparestring[2]{%
+    \edef\tempa{#1}%
+    \edef\tempb{#2}%
+    \ifx\tempa\tempb%
+        \expandafter\@firstoftwo%
+    \else%
+        \expandafter\@secondoftwo%
+    \fi%
+}
+\def\altarticle@compareint#1#2{%
+    \ifnum#1=#2\relax%
+        \expandafter\@firstoftwo%
+    \else%
+        \expandafter\@secondoftwo%
+    \fi%
+}
+\def\altarticle@toolsfindlist{}
+\newcommand{\altarticle@isnotinlist}[2]{%
+    \altarticle@comparestring{#2}{}{\def\altarticle@toolsfindlist{}}{%
+        \def\altarticle@toolsfindlist{0}%
+        \edef\lst{#2}%
+        \foreach \i in \lst {\altarticle@comparestring{#1}{\i}{\xdef\altarticle@toolsfindlist{}}{}}%
+    }%
+}
+\def\altarticle@ifinlist#1#2{%
+    \altarticle@isnotinlist{#1}{#2}%
+    \altarticle@comparestring{\altarticle@toolsfindlist}{}%
+}
+\def\toggleboldmath{false}
+\robustify{\toggleboldmath}
+\apptocmd{\boldmath}{\def\toggleboldmath{true}}{}{}
+\apptocmd{\unboldmath}{\def\toggleboldmath{false}}{}{}
+\def\convertto#1#2{\strip@pt\dimexpr #2*65536/\number\dimexpr 1#1} % eg: \convertto{pt}{1em}pt
+\ExplSyntaxOn
+\cs_new_protected:Npn \ndetokenize #1
+  {
+    \tl_set:Nn \l_tmpa_tl {#1}
+    \regex_replace_all:nnN { . } { \c{string} \0 } \l_tmpa_tl
+    \tl_set:Nx \l_tmpb_tl { \l_tmpa_tl }
+    % now \l_tmpb_tl contains what you want:
+    \tl_use:N \l_tmpb_tl
+  }
+\ExplSyntaxOff
+
+
+
+%%% General commands
+\DeclareRobustCommand\circled[1]{\vphantom{\ensuremath{#1}}\smash{\tikzset{external/export=false}\tikz[baseline={(char.base)}]{\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}}
+\DeclareRobustCommand\boxed[1]{\vphantom{\ensuremath{#1}}\smash{\tikzset{external/export=false}\tikz[baseline={(char.base)}]{\node[shape=rectangle,rounded corners=0.05cm,draw,inner sep=2pt] (char) {\ensuremath{#1}};}}}
+\let\mathunderline\underline
+\def\underline#1{% 
+   \vphantom{#1}\leavevmode\vbox to0pt{\vss 
+        \hrule height.3pt
+        \vskip-\baselineskip \kern1pt 
+        \hbox{\strut\rlap{\color{white}\pdfliteral{2 Tr 1.1 w}#1\pdfliteral{0 Tr 0 w}}#1} 
+}}
+\everymath{\def\underline{\mathunderline}}
+\DeclareRobustCommand\strikethrough[1]{\raisebox{1ex}{\mathunderline{\smash{\raisebox{-1ex}{#1}}}}}
+\title{}
+\author{}
+
+
+
+%%% TIkZ commands
+\tikzset{arrow style/.style={->=latex,shorten >=2pt, shorten <=2pt}}
 \tikzset{>=Computer Modern Rightarrow}
-\usepackage{tikz-cd}
 \tikzset{no body/.style={/tikz/dash pattern=on 0 off 100pt, line cap=butt}}
 \tikzset{no cd head/.style={-Butt Cap, shorten >=0.05ex}}
 \tikzcdset{
     arrow style=tikz,
     every arrow/.append style={line cap=round},
+    equal/.code={\tikzcdset{double line, nfold}\pgfsetarrows{tikzcd implies cap-tikzcd implies cap}},
     mono/.code={\pgfsetarrows{>->}},
-    epi/.code={\pgfsetarrows{->[sep=+0pt -2.6]cm>}},
-    reg epi/.code={\pgfsetarrows{-filled to}}
+    epi/.code={\pgfsetarrows{->[sep=+0pt -2.6]>}},
+    reg epi/.code={\pgfsetarrows{-filled cm}},
+    reg mono/.code={\pgfsetarrows{filled cm[reversed]->}}
 }
 \pgfdeclarearrow{
   name = filled cm,
@@ -142,11 +228,9 @@
     \ifpgfarrowroundcap c\fi%
   },
 }%
-\renewcommand{\ttdefault}{cmtl}
-\DeclareMathAlphabet{\mathsfl}{OT1}{cmbr}{m}{n}
-\DeclareMathAlphabet{\mathsbfl}{OT1}{cmbr}{bx}{n}
-\DeclareEmphSequence{\slshape}
-\usepackage{dsft}
+\newcommand\tikzcdsqname[6][]{
+    \path[overlay] (\tikzcdmatrixname-#3-#4.center) -- (\tikzcdmatrixname-#5-#6.center) node[midway, anchor=center, #1, shape=rectangle, rounded corners=0.05cm, draw, inner sep=2pt] {{\ensuremath{\scriptstyle#2}}};
+}
 
 
 
@@ -160,10 +244,10 @@
 
         \RequireBibliographyStyle{numeric}
 
-        \DeclareBibliographyOption[boolean]{ordrecitation}[true]{% Option to enforce citation order
-        \ifstrequal{#1}{true}
-            {\ExecuteBibliographyOptions{sorting=none}}
-            {}}
+        % \DeclareBibliographyOption[boolean]{ordrecitation}[true]{% Option to enforce citation order
+        % \ifstrequal{#1}{true}
+        %     {\ExecuteBibliographyOptions{sorting=none}}
+        %     {}}
 
         % French localization
         \DefineBibliographyStrings{french}{
@@ -174,8 +258,20 @@
         byeditor = {sous la direction de},
         edition = {édition},
         volume = {volume},
-        number = {n	extdegree},
+        number = {n\textdegree},
         in = {Dans},
+        }
+        % French localization
+        \DefineBibliographyStrings{english}{
+        urlseen = {Viewed on},
+        pages = {p.},
+        editor = {dir.},
+        editors = {dirs.},
+        byeditor = {edited by},
+        edition = {edition},
+        volume = {volume},
+        number = {n\textdegree},
+        in = {In},
         }
 
         % Adjust citation label format to remove brackets
@@ -210,7 +306,8 @@
         \setunit{\addcolon\space}%
         \newblock
         \printfield{title}%
-        \setunit{\addcomma\space\bibstring{in}\space}%
+        \setunit{\addcomma\space}%
+        % \setunit{\addcomma\space\bibstring{in}\space}%
         \printfield{booktitle}%
         \setunit{\addcomma\space}%
         \printfield{edition}%
@@ -230,21 +327,25 @@
         \usebibmacro{bibindex}%
         \usebibmacro{begentry}%
         \printnames{author}%
-        \setunit{\addspace}%
+        \setunit{\addcolon\space}%
         \newblock
         \printfield{title}%
-        \setunit{\addperiod\space}%
-        \printfield{journaltitle}%
+        % \setunit{\addcomma\space\bibstring{in}\space}%
         \setunit{\addcomma\space}%
+        \setunit{\addcomma\space}%
+        \printfield{journaltitle}%
+        \setunit{\addspace}%
+        \printtext[parens]{%
         \printfield{volume}%
         \setunit{\addcomma\space}%
         \printfield{number}%
-        \setunit{\addcomma\space}%
-        \printfield{pages}%
+        }%
+        % \setunit{\addcomma\space\bibstring{pages}\space}%
+        % \printfield{pages}%
         \setunit{\addcomma\space}%
         \printfield{year}%
-        \setunit{\addcomma\space}%
-        \printfield{note}%
+        % \setunit{\addcomma\space}%
+        % \printfield{note}%
         \setunit{\addperiod}%
         \finentry
         }
@@ -280,7 +381,22 @@
     \end{filecontents}
 \fi
 \ifaltarticle@bibliography
-    \usepackage[backend=biber, style=unsrt, sorting=none, maxcitenames=50]{biblatex}
+    \PassOptionsToPackage{sorting=\altarticle@bibsorting}{biblatex}
+    \usepackage[backend=biber, style=unsrt, maxcitenames=50]{biblatex}
+    \apptocmd{\printbibliography}{\addcontentsline{toc}{section}{\protect\numberline{}\refname}}{}{}
+    \altarticle@comparestring{\altarticle@babellanguage}{french}{}{
+        \protected\def\mkbibordedition#1{%
+            \begingroup
+                \@tempcnta0#1\relax\number\@tempcnta
+                \@whilenum\@tempcnta>100\do{\advance\@tempcnta-100\relax}%
+                \ifnum\@tempcnta>20
+                    \@whilenum\@tempcnta>9\do{\advance\@tempcnta-10\relax}%
+                \fi
+                \ifcase\@tempcnta\textsuperscript{th}\or\textsuperscript{st}\or\textsuperscript{nd}\or\textsuperscript{rd}\else\textsuperscript{th}\fi
+            \endgroup}%
+        \protected\def\mkbibnamefamily#1{\textsc{\textnohyphenation{#1}}}
+    }
+    \renewcommand*{\postnotedelim}{\addsemicolon\space}
     \setlength{\bibitemsep}{0pt}
     \setlength{\biblabelsep}{0pt}
     \newlength{\newlabelnumberwidth}
@@ -335,80 +451,6 @@
 
 
 
-%%% General commands
-\DeclareRobustCommand\circled[1]{\vphantom{\ensuremath{#1}}\smash{\tikz[baseline={(char.base)}]{\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}}
-\DeclareRobustCommand\boxed[1]{\vphantom{\ensuremath{#1}}\smash{\tikz[baseline={(char.base)}]{\node[shape=rectangle,rounded corners=0.05cm,draw,inner sep=2pt] (char) {\ensuremath{#1}};}}}
-\let\mathunderline\underline
-\def\underline#1{% 
-   \vphantom{#1}\leavevmode\vbox to0pt{\vss 
-        \hrule height.3pt
-        \vskip-\baselineskip \kern1pt 
-        \hbox{\strut\rlap{\color{white}\pdfliteral{2 Tr 1.1 w}#1\pdfliteral{0 Tr 0 w}}#1} 
-}}
-\everymath{\def\underline{\mathunderline}}
-\DeclareRobustCommand\strikethrough[1]{\raisebox{1ex}{\mathunderline{\smash{\raisebox{-1ex}{#1}}}}}
-\title{}
-\author{}
-\def\refname{Références\phantomsection}
-
-
-
-%%% Useful command
-\DeclareRobustCommand\altarticle@comparestring[2]{%
-    \edef\tempa{#1}%
-    \edef\tempb{#2}%
-    \ifx\tempa\tempb%
-        \expandafter\@firstoftwo%
-    \else%
-        \expandafter\@secondoftwo%
-    \fi%
-}
-\DeclareRobustCommand\labelcomparestring[2]{%
-    \edef\tempa{#1}%
-    \edef\tempb{#2}%
-    \ifx\tempa\tempb%
-        \expandafter\@firstoftwo%
-    \else%
-        \expandafter\@secondoftwo%
-    \fi%
-}
-\def\altarticle@compareint#1#2{%
-    \ifnum#1=#2\relax%
-        \expandafter\@firstoftwo%
-    \else%
-        \expandafter\@secondoftwo%
-    \fi%
-}
-\def\altarticle@toolsfindlist{}
-\newcommand{\altarticle@isnotinlist}[2]{%
-    \altarticle@comparestring{#2}{}{\def\altarticle@toolsfindlist{}}{%
-        \def\altarticle@toolsfindlist{0}%
-        \edef\lst{#2}%
-        \foreach \i in \lst {\altarticle@comparestring{#1}{\i}{\xdef\altarticle@toolsfindlist{}}{}}%
-    }%
-}
-\def\altarticle@ifinlist#1#2{%
-    \altarticle@isnotinlist{#1}{#2}%
-    \altarticle@comparestring{\altarticle@toolsfindlist}{}%
-}
-\def\toggleboldmath{false}
-\robustify{\toggleboldmath}
-\apptocmd{\boldmath}{\def\toggleboldmath{true}}{}{}
-\apptocmd{\unboldmath}{\def\toggleboldmath{false}}{}{}
-\def\convertto#1#2{\strip@pt\dimexpr #2*65536/\number\dimexpr 1#1} % eg: \convertto{pt}{1em}pt
-\ExplSyntaxOn
-\cs_new_protected:Npn \ndetokenize #1
-  {
-    \tl_set:Nn \l_tmpa_tl {#1}
-    \regex_replace_all:nnN { . } { \c{string} \0 } \l_tmpa_tl
-    \tl_set:Nx \l_tmpb_tl { \l_tmpa_tl }
-    % now \l_tmpb_tl contains what you want:
-    \tl_use:N \l_tmpb_tl
-  }
-\ExplSyntaxOff
-
-
-
 %%% Math (re)definitions
 \let\tilde\widetilde
 %% Define l to \ell
@@ -442,11 +484,11 @@
 \DeclareRobustCommand\ffakebold[1]{\setbox0=\hbox{$#1$}#1\kern-\wd0\raise\bshft\hbox{$#1$}\kern-\wd0\lower\bshft\hbox{$#1$}\kern-\wd0\kern\bshft#1\kern-\wd0\raise\bshft\hbox{$#1$}\kern-\wd0\lower\bshft\hbox{$#1$}\kern-\wd0\kern\bshft#1\kern-\wd0\raise\bshft\hbox{$#1$}\kern-\wd0\lower\bshft\hbox{$#1$}}
 %% Unslant
 \newcommand{\slantbox}[2][-.25]{\kern-.125em%
-    \begin{tikzpicture}[outer sep=0, inner sep=0]%
+    {\tikzset{external/export=false}\begin{tikzpicture}[outer sep=0, inner sep=0]%
     \begin{scope}[cm={1,0,#1,1,(0,0)},baseline=0,outer sep=0, inner sep=0]
     \node[transform shape] at (0,0) {#2};%
     \end{scope}%
-    \end{tikzpicture}%
+    \end{tikzpicture}}%
 }
 \newsavebox{\foobox}
 \newlength{\foodim}
@@ -738,7 +780,7 @@
     \settodepth{\mydd}{\usebox{\actstobox}}%
     \settowidth{\myww}{\usebox{\actstobox}}%
     \edef\mulen{\convertto{1pt}{1em}pt}%
-    \mathrel{\begin{tikzpicture}[baseline=-.85ex]\draw[-{>[length=.25em,width=1.25*\the\myhh]},line cap=round,line width=.085ex,smooth] (0,1/9em) to[out=50,in=130] ($(\the\myww,-.005)+(-\mulen,0)$);\end{tikzpicture}}%
+    \mathrel{{\tikzset{external/export=false}\begin{tikzpicture}[baseline=-.85ex]\draw[-{>[length=.25em,width=1.25*\the\myhh]},line cap=round,line width=.085ex,smooth] (0,1/9em) to[out=50,in=130] ($(\the\myww,-.005)+(-\mulen,0)$);\end{tikzpicture}}}%
 }
 \newcommand{\dashto}{\mathrel{-\mkern-6mu{\to}\mkern-22.5mu{\text{\color{white}\boldmath${\cdot}{\cdot}{\cdot}$}}\mkern1mu\phantom{.}}}
 \newsavebox\ttobox
@@ -896,12 +938,32 @@
 %%% Footnotes
 \let\kernFFN\relax
 \newcommand{\kernFFN}{{ }}
-\let\insertfootnotemarkFB\relax
-\newcommand\insertfootnotemarkFB
-  {\rule\z@\footnotesep%
-   \makebox[\parindentFFN][l]{\hfill\@thefnmark\dotFFN}%
-   \kernFFN
-  }
+\def\dotFFN{.}
+\altarticle@comparestring{\altarticle@babellanguage}{french}{%
+    \let\insertfootnotemarkFB\relax
+    \newcommand\insertfootnotemarkFB{%
+        \rule\z@\footnotesep%
+        \makebox[\parindentFFN][l]{\hfill\@thefnmark\dotFFN}%
+        \kernFFN%
+    }%
+}{%
+    \newdimen\parindentFFN
+    \newdimen\FBfnindent
+    \parindentFFN=1.5em
+    \settowidth{\FBfnindent}{\dotFFN\kernFFN}%
+    \addtolength{\FBfnindent}{\parindentFFN}%
+    \let\insertfootnotemarkFB\relax
+    \newcommand\insertfootnotemarkFB{
+        \rule\z@\footnotesep%
+        \makebox[\parindentFFN][l]{\hfill\@thefnmark\dotFFN}%
+        \kernFFN
+    }
+    \let\@makefntextFB\relax
+    \providecommand\@makefntextFB[1]{\insertfootnotemarkFB #1}
+    \long\def\@makefntext#1{%
+        \@makefntextFB{#1}%
+    }%
+}
 
 \newcounter{footnotemarkcounter}
 \setcounter{footnotemarkcounter}0
@@ -2005,8 +2067,8 @@ space before arrow={0.2ex},
 }
 \newcommand{\amp}{\detokenize{&}}
 \newcommand{\tmatrix}[1][]{\def\tmatargI{#1}\tmptmatrix}
-\newcommand{\tmptmatrix}[4][]{
-\begin{tikzpicture}[baseline={([yshift=-0.5ex]m.center)}]
+\newcommand{\tmptmatrix}[4][]{%
+{\tikzset{external/export=false}\begin{tikzpicture}[baseline={([yshift=-0.5ex]m.center)}]
     \matrix (m) [
         ampersand replacement=\&,
         nodes={anchor=center},
@@ -2023,13 +2085,13 @@ space before arrow={0.2ex},
         #1
     ] {#3};
     \tmatargI
-\end{tikzpicture}}
+\end{tikzpicture}}}
 \newcommand\smalltmatrix[1][]{\tmatrix[#1][minimum height = 0ex, row sep = .5ex, minimum width = 0ex, column sep = 1ex, inner sep = 0ex, nodes={anchor=base, execute at begin node=\scriptstyle},]}
 \newcommand\crampedtmatrix[1][]{\tmatrix[#1][minimum height = 0ex, row sep = .5ex, minimum width = 0ex, column sep = 1ex, inner sep = 0ex, nodes={anchor=base},]}
 \newcommand\sctmatrix{\if@bigopdisplay\expandafter\crampedtmatrix\else\expandafter\smalltmatrix\fi}
 \newcommand{\tcase}[1][]{\def\tmatargI{#1}\if@bigopdisplay\expandafter\tmpdtcase\else\expandafter\tmptcase\fi}
-\newcommand{\tmptcase}[2][]{
-\kern-.2em\begin{tikzpicture}[every left delimiter/.style={xshift=.2em},every right delimiter/.style={xshift=-.125em},baseline={([yshift=-0.5ex]m.center)}]
+\newcommand{\tmptcase}[2][]{%
+\kern-.2em{\tikzset{external/export=false}\begin{tikzpicture}[every left delimiter/.style={xshift=.2em},every right delimiter/.style={xshift=-.125em},baseline={([yshift=-0.5ex]m.center)}]
     \matrix (m) [
         ampersand replacement=\&,
         nodes={anchor=west, execute at begin node=$\scriptstyle,%
@@ -2048,9 +2110,9 @@ space before arrow={0.2ex},
         #1
     ] {#2};
     \tmatargI
-\end{tikzpicture}}
-\newcommand{\tmpdtcase}[2][]{
-\kern-.2em\begin{tikzpicture}[every left delimiter/.style={xshift=.2em},every right delimiter/.style={xshift=-.125em},baseline={([yshift=-0.5ex]m.center)}]
+\end{tikzpicture}}}
+\newcommand{\tmpdtcase}[2][]{%
+\kern-.2em{\tikzset{external/export=false}\begin{tikzpicture}[every left delimiter/.style={xshift=.2em},every right delimiter/.style={xshift=-.125em},baseline={([yshift=-0.5ex]m.center)}]
     \matrix (m) [
         ampersand replacement=\&,
         nodes={anchor=west, execute at begin node=$,%
@@ -2069,7 +2131,7 @@ space before arrow={0.2ex},
         #1
     ] {#2};
     \tmatargI
-\end{tikzpicture}}
+\end{tikzpicture}}}
 \DeclareMathSymbol{\mcdot}{\mathpunct}{symbols}{"01}
 \def\oldmdots{\mathinner{\hbox{$\mcdot$}\hbox{$\mcdot$}\hbox{$\mcdot$}}}
 \def\oldddots{\mathinner{\raise2\dotsep\vbox{\hbox{$\mcdot$}}\raise\dotsep\hbox{$\mcdot$}\raise0pt\hbox{$\mcdot$}}}
