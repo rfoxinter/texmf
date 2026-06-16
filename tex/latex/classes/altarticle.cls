@@ -6,11 +6,13 @@
 \SetupKeyvalOptions{prefix=altarticle@}
 \DeclareStringOption[margin=2.5cm]{geometryargs}
 \DeclareStringOption[french]{babellanguage}
+\DeclareStringOption[none]{bibsorting}
 \DeclareBoolOption{unslantgreek}
 \DeclareBoolOption{unslantlatin}
 \DeclareBoolOption{unslantLatin}
 \DeclareBoolOption{defaulttheorems}
 \DeclareBoolOption{bibliography}
+\DeclareBoolOption{titlespace}
 \DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessKeyvalOptions*
 \PassOptionsToPackage{\altarticle@babellanguage}{babel}
@@ -80,7 +82,8 @@
     {\normalfont\normalsize\bfseries}%
 }
 \def\@maketitle{%
-    \newpage
+    \newpage%
+    \ifaltarticle@titlespace\null\bigskip\fi%
     \begin{center}%
     \let \footnote \thanks
         \ifdefempty{\@title}{}{{\LARGE \@title \par}}%
@@ -89,7 +92,8 @@
         \ifdefempty{\@date}{}{\vskip 1em%
         {\large \@date}}%
     \end{center}%
-    \par
+    \par%
+    \ifaltarticle@titlespace\null\bigskip\fi%
 }
 
 
@@ -107,136 +111,280 @@
     \altarticle@comparestring{\arabic{#1}}{\arabic{#2}}{\relax}{\refstepcounter{#2}\incrementcounter{#1}{#2}}%
 }
 
-\newcommand{\createtheorem}[6]{%
-    \@ifundefined{c@thms#5counter}{
-        \newcounter{thms#5counter}
-    }{}
-    \setcounter{thms#5counter}0
-    \@ifundefined{c@#1}{%
-        \newcounter{#1}%
-    }{}%
-    \@ifundefined{c@#1star}{%
-        \newcounter{#1star}%
-    }{}%
-    \if\relax\detokenize{#5}\relax%
-    \else%
-        \counterwithin{thms#5counter}{#5}
-        \counterwithin{#1}{#5}%
-      \fi%
-    \setcounter{#1}{0}%
-    \expandafter\let\csname #1autorefname\endcsname\relax%
-    \expandafter\let\csname #1starautorefname\endcsname\relax%
-    \expandafter\let\csname #1\endcsname\relax%
-    \expandafter\let\csname @#1star\endcsname\relax%
-    \expandafter\let\csname @#1startmp\endcsname\relax%
-    \expandafter\let\csname @#1startmptmp\endcsname\relax%
-    \expandafter\let\csname @#1\endcsname\relax%
-    \expandafter\let\csname @#1tmp\endcsname\relax%
-    \expandafter\let\csname @#1tmptmp\endcsname\relax%
-    \expandafter\newcommand\csname #1autorefname\endcsname{#4}%
-    \expandafter\newcommand\csname #1starautorefname\endcsname{#4}%
-    \expandafter\newcommand\csname #1\endcsname{%
-        \@ifstar%
-            {\csname @#1startmptmptmp\endcsname}%
-            {\csname @#1tmptmptmp\endcsname}%
-    }%
-    \expandafter\newcommand\csname @#1tmptmptmp\endcsname[1][]{%
-        \def\thmoptargI{##1}%
-        \csname @#1tmptmp\endcsname%
-    }%
-    \expandafter\newcommand\csname @#1tmptmp\endcsname[1][]{%
-        \def\thmoptargII{##1}%
-        \csname @#1tmp\endcsname%
-    }%
-    \expandafter\newcommand\csname @#1tmp\endcsname[1][]{%
-        \def\thmoptargIII{##1}%
-        \csname @#1\endcsname%
-    }%
-    \expandafter\newcommand\csname @#1\endcsname[2][]{%
-        \par%
-        \ifdefempty{\thmoptargI}{%
-            \def\argI{##2}%
-        }{%
-            \def\argI{\thmoptargI}%
-        }%
-        \ifdefempty{\thmoptargIII}{%
-            \def\tocargII{##2}%
-            \def\argII{##2}%
-        }{%
-            \def\tocargII{\thmoptargIII}%
-            \def\argII{\labelcomparestring{\toggleboldmath}{true}{##2}{\thmoptargIII}}%
-        }%
-        \altarticle@comparestring{#6}{true}{%
-            \stepcounter{thms#5counter}%
-            \incrementcounter{thms#5counter}{#1}%
-        }{%
-            \refstepcounter{#1}%
-        }%
-        \if\relax\detokenize{##2}\relax%
-            \textbf{\boldmath#2 \csname the#1\endcsname{}~:}\ifdefempty{\argI}{}{\label{#3 \argI}}{} %
+\altarticle@comparestring{\altarticle@babellanguage}{french}{
+    \newcommand{\createtheorem}[6]{%
+        \@ifundefined{c@thms#5counter}{
+            \newcounter{thms#5counter}
+        }{}
+        \setcounter{thms#5counter}0
+        \@ifundefined{c@#1}{%
+            \newcounter{#1}%
+        }{}%
+        \@ifundefined{c@#1star}{%
+            \newcounter{#1star}%
+        }{}%
+        \if\relax\detokenize{#5}\relax%
         \else%
-            \altarticle@comparestring{##1}{true}{%
-                \textbf{\boldmath#2 \csname the#1\endcsname{}\ifthmname{} (\textsl{##2})\fi~:}\ifdefempty{\argI}{}{\label{#3 \argI}}{} %
+            \counterwithin{thms#5counter}{#5}
+            \counterwithin{#1}{#5}%
+          \fi%
+        \setcounter{#1}{0}%x
+        \expandafter\let\csname #1\endcsname\relax%
+        \expandafter\let\csname @#1star\endcsname\relax%
+        \expandafter\let\csname @#1startmp\endcsname\relax%
+        \expandafter\let\csname @#1startmptmp\endcsname\relax%
+        \expandafter\let\csname @#1startmptmptmp\endcsname\relax%
+        \expandafter\let\csname @#1\endcsname\relax%
+        \expandafter\let\csname @#1tmp\endcsname\relax%
+        \expandafter\let\csname @#1tmptmp\endcsname\relax%
+        \expandafter\let\csname @#1tmptmptmp\endcsname\relax%
+        \AtBeginDocument{%
+            \expandafter\let\csname #1autorefname\endcsname\relax%
+            \expandafter\let\csname #1starautorefname\endcsname\relax%
+            \expandafter\newcommand\csname #1autorefname\endcsname{#4}%
+            \expandafter\newcommand\csname #1starautorefname\endcsname{#4}%
+        }
+        \expandafter\newcommand\csname #1\endcsname{%
+            \@ifstar%
+                {\csname @#1startmptmptmp\endcsname}%
+                {\csname @#1tmptmptmp\endcsname}%
+        }%
+        \expandafter\newcommand\csname @#1tmptmptmp\endcsname[1][]{%
+            \def\thmoptargI{##1}%
+            \csname @#1tmptmp\endcsname%
+        }%
+        \expandafter\newcommand\csname @#1tmptmp\endcsname[1][]{%
+            \def\thmoptargII{##1}%
+            \csname @#1tmp\endcsname%
+        }%
+        \expandafter\newcommand\csname @#1tmp\endcsname[1][]{%
+            \def\thmoptargIII{##1}%
+            \csname @#1\endcsname%
+        }%
+        \expandafter\newcommand\csname @#1\endcsname[2][]{%
+            \par%
+            \ifdefempty{\thmoptargI}{%
+                \def\argI{##2}%
             }{%
-                \textbf{\boldmath#2 \csname the#1\endcsname{}\ifthmname{} (\textsl{##2})\fi~:}\ifdefempty{\argI}{}{\label{#3 \argI}\def\@currentlabel{\altarticle@comparestring{\@displaythmname}{true}{#4 }{}\thmoptargII\argII}\label{t@#3 \argI}}\addcontentsline{to#1}{thm}{\ignorespaces{\noexpand\expandafter\noexpand\MakeUppercase\thmoptargII\tocargII}}{} %
+                \def\argI{\thmoptargI}%
             }%
-        \fi%
-    }%
-    \expandafter\newcommand\csname @#1startmptmptmp\endcsname[1][]{%
-        \def\thmoptargI{##1}%
-        \csname @#1startmptmp\endcsname%
-    }%
-    \expandafter\newcommand\csname @#1startmptmp\endcsname[1][]{%
-        \def\thmoptargII{##1}%
-        \csname @#1startmp\endcsname%
-    }%
-    \expandafter\newcommand\csname @#1startmp\endcsname[1][]{%
-        \def\thmoptargIII{##1}%
-        \csname @#1star\endcsname%
-    }%
-    \expandafter\newcommand\csname @#1star\endcsname[2][]{%
-        \par%
-        \refstepcounter{#1star}%
-        \ifdefempty{\thmoptargI}{%
-            \def\argI{##2}
-        }{%
-            \def\argI{\thmoptargI}%
+            \ifdefempty{\thmoptargIII}{%
+                \def\tocargII{##2}%
+                \def\argII{##2}%
+            }{%
+                \def\tocargII{\thmoptargIII}%
+                \def\argII{\labelcomparestring{\toggleboldmath}{true}{##2}{\thmoptargIII}}%
+            }%
+            \altarticle@comparestring{#6}{true}{%
+                \stepcounter{thms#5counter}%
+                \incrementcounter{thms#5counter}{#1}%
+            }{%
+                \refstepcounter{#1}%
+            }%
+            \if\relax\detokenize{##2}\relax%
+                \textbf{\boldmath#2 \csname the#1\endcsname{}~:}\ifdefempty{\argI}{}{\label{#3 \argI}}{} %
+            \else%
+                \altarticle@comparestring{##1}{true}{%
+                    \textbf{\boldmath#2 \csname the#1\endcsname{}\ifthmname{} (\textsl{##2})\fi{}~:}\ifdefempty{\argI}{}{\label{#3 \argI}}{} %
+                }{%
+                    \textbf{\boldmath#2 \csname the#1\endcsname{}\ifthmname{} (\textsl{##2})\fi{}~:}\ifdefempty{\argI}{}{\label{#3 \argI}\def\@currentlabel{\altarticle@comparestring{\@displaythmname}{true}{#4 }{}\thmoptargII\argII}\label{t@#3 \argI}}\addcontentsline{to#1}{thm}{\ignorespaces{\noexpand\expandafter\noexpand\MakeUppercase\thmoptargII\tocargII}}{} %
+                }%
+            \fi%
         }%
-        \ifdefempty{\thmoptargIII}{%
-            \def\tocargII{##2}
-            \def\argII{##2}
-        }{%
-            \def\tocargII{\thmoptargIII}
-            \def\argII{\labelcomparestring{\toggleboldmath}{true}{##2}{\thmoptargIII}}%
+        \expandafter\newcommand\csname @#1startmptmptmp\endcsname[1][]{%
+            \def\thmoptargI{##1}%
+            \csname @#1startmptmp\endcsname%
         }%
-        \if\relax\detokenize{##2}\relax%
-            \textbf{\boldmath#2~:}{} %
+        \expandafter\newcommand\csname @#1startmptmp\endcsname[1][]{%
+            \def\thmoptargII{##1}%
+            \csname @#1startmp\endcsname%
+        }%
+        \expandafter\newcommand\csname @#1startmp\endcsname[1][]{%
+            \def\thmoptargIII{##1}%
+            \csname @#1star\endcsname%
+        }%
+        \expandafter\newcommand\csname @#1star\endcsname[2][]{%
+            \par%
+            \refstepcounter{#1star}%
+            \ifdefempty{\thmoptargI}{%
+                \def\argI{##2}
+            }{%
+                \def\argI{\thmoptargI}%
+            }%
+            \ifdefempty{\thmoptargIII}{%
+                \def\tocargII{##2}
+                \def\argII{##2}
+            }{%
+                \def\tocargII{\thmoptargIII}
+                \def\argII{\labelcomparestring{\toggleboldmath}{true}{##2}{\thmoptargIII}}%
+            }%
+            \if\relax\detokenize{##2}\relax%
+                \textbf{\boldmath#2{}~:}{} %
+            \else%
+                \altarticle@comparestring{##1}{true}{%
+                    \textbf{\boldmath#2\ifthmname{} (\textsl{##2})\fi{}~:}{} %
+                }{%
+                    \textbf{\boldmath#2\ifthmname{} (\textsl{##2})\fi{}~:}\ifdefempty{\argI}{}{\def\@currentlabel{\thmoptargII\argII}\label{t@#3 \argI}}{}\addcontentsline{to#1}{thm}{\ignorespaces{\noexpand\expandafter\noexpand\MakeUppercase\thmoptargII\tocargII}}{} %
+                }%
+            \fi%
+        }%
+    }%
+}{
+    \newcommand{\createtheorem}[6]{%
+        \@ifundefined{c@thms#5counter}{
+            \newcounter{thms#5counter}
+        }{}
+        \setcounter{thms#5counter}0
+        \@ifundefined{c@#1}{%
+            \newcounter{#1}%
+        }{}%
+        \@ifundefined{c@#1star}{%
+            \newcounter{#1star}%
+        }{}%
+        \if\relax\detokenize{#5}\relax%
         \else%
-            \altarticle@comparestring{##1}{true}{%
-                \textbf{\boldmath#2\ifthmname{} (\textsl{##2})\fi~:}{} %
+            \counterwithin{thms#5counter}{#5}
+            \counterwithin{#1}{#5}%
+          \fi%
+        \setcounter{#1}{0}%
+        \expandafter\let\csname #1\endcsname\relax%
+        \expandafter\let\csname @#1star\endcsname\relax%
+        \expandafter\let\csname @#1startmp\endcsname\relax%
+        \expandafter\let\csname @#1startmptmp\endcsname\relax%
+        \expandafter\let\csname @#1startmptmptmp\endcsname\relax%
+        \expandafter\let\csname @#1\endcsname\relax%
+        \expandafter\let\csname @#1tmp\endcsname\relax%
+        \expandafter\let\csname @#1tmptmp\endcsname\relax%
+        \expandafter\let\csname @#1tmptmptmp\endcsname\relax%
+        \AtBeginDocument{%
+            \expandafter\let\csname #1autorefname\endcsname\relax%
+            \expandafter\let\csname #1starautorefname\endcsname\relax%
+            \expandafter\newcommand\csname #1autorefname\endcsname{#4}%
+            \expandafter\newcommand\csname #1starautorefname\endcsname{#4}%
+        }
+        \expandafter\newcommand\csname #1\endcsname{%
+            \@ifstar%
+                {\csname @#1startmptmptmp\endcsname}%
+                {\csname @#1tmptmptmp\endcsname}%
+        }%
+        \expandafter\newcommand\csname @#1tmptmptmp\endcsname[1][]{%
+            \def\thmoptargI{##1}%
+            \csname @#1tmptmp\endcsname%
+        }%
+        \expandafter\newcommand\csname @#1tmptmp\endcsname[1][]{%
+            \def\thmoptargII{##1}%
+            \csname @#1tmp\endcsname%
+        }%
+        \expandafter\newcommand\csname @#1tmp\endcsname[1][]{%
+            \def\thmoptargIII{##1}%
+            \csname @#1\endcsname%
+        }%
+        \expandafter\newcommand\csname @#1\endcsname[2][]{%
+            \par%
+            \ifdefempty{\thmoptargI}{%
+                \def\argI{##2}%
             }{%
-                \textbf{\boldmath#2\ifthmname{} (\textsl{##2})\fi~:}\ifdefempty{\argI}{}{\def\@currentlabel{\thmoptargII\argII}\label{t@#3 \argI}}{}\addcontentsline{to#1}{thm}{\ignorespaces{\noexpand\expandafter\noexpand\MakeUppercase\thmoptargII\tocargII}}{} %
+                \def\argI{\thmoptargI}%
             }%
-        \fi%
+            \ifdefempty{\thmoptargIII}{%
+                \def\tocargII{##2}%
+                \def\argII{##2}%
+            }{%
+                \def\tocargII{\thmoptargIII}%
+                \def\argII{\labelcomparestring{\toggleboldmath}{true}{##2}{\thmoptargIII}}%
+            }%
+            \altarticle@comparestring{#6}{true}{%
+                \stepcounter{thms#5counter}%
+                \incrementcounter{thms#5counter}{#1}%
+            }{%
+                \refstepcounter{#1}%
+            }%
+            \if\relax\detokenize{##2}\relax%
+                \textbf{\boldmath#2 \csname the#1\endcsname{}:}\ifdefempty{\argI}{}{\label{#3 \argI}}{} %
+            \else%
+                \altarticle@comparestring{##1}{true}{%
+                    \textbf{\boldmath#2 \csname the#1\endcsname{}\ifthmname{} (\textsl{##2})\fi{}:}\ifdefempty{\argI}{}{\label{#3 \argI}}{} %
+                }{%
+                    \textbf{\boldmath#2 \csname the#1\endcsname{}\ifthmname{} (\textsl{##2})\fi{}:}\ifdefempty{\argI}{}{\label{#3 \argI}\def\@currentlabel{\altarticle@comparestring{\@displaythmname}{true}{#4 }{}\argII\thmoptargII}\label{t@#3 \argI}}\addcontentsline{to#1}{thm}{\ignorespaces{\noexpand\expandafter\noexpand\MakeUppercase\tocargII\thmoptargII}}{} %
+                }%
+            \fi%
+        }%
+        \expandafter\newcommand\csname @#1startmptmptmp\endcsname[1][]{%
+            \def\thmoptargI{##1}%
+            \csname @#1startmptmp\endcsname%
+        }%
+        \expandafter\newcommand\csname @#1startmptmp\endcsname[1][]{%
+            \def\thmoptargII{##1}%
+            \csname @#1startmp\endcsname%
+        }%
+        \expandafter\newcommand\csname @#1startmp\endcsname[1][]{%
+            \def\thmoptargIII{##1}%
+            \csname @#1star\endcsname%
+        }%
+        \expandafter\newcommand\csname @#1star\endcsname[2][]{%
+            \par%
+            \refstepcounter{#1star}%
+            \ifdefempty{\thmoptargI}{%
+                \def\argI{##2}
+            }{%
+                \def\argI{\thmoptargI}%
+            }%
+            \ifdefempty{\thmoptargIII}{%
+                \def\tocargII{##2}
+                \def\argII{##2}
+            }{%
+                \def\tocargII{\thmoptargIII}
+                \def\argII{\labelcomparestring{\toggleboldmath}{true}{##2}{\thmoptargIII}}%
+            }%
+            \if\relax\detokenize{##2}\relax%
+                \textbf{\boldmath#2{}:}{} %
+            \else%
+                \altarticle@comparestring{##1}{true}{%
+                    \textbf{\boldmath#2\ifthmname{} (\textsl{##2})\fi{}:}{} %
+                }{%
+                    \textbf{\boldmath#2\ifthmname{} (\textsl{##2})\fi{}:}\ifdefempty{\argI}{}{\def\@currentlabel{\thmoptargII\argII}\label{t@#3 \argI}}{}\addcontentsline{to#1}{thm}{\ignorespaces{\noexpand\expandafter\noexpand\MakeUppercase\thmoptargII\tocargII}}{} %
+                }%
+            \fi%
+        }%
     }%
 }
 %% Proof
-\newenvironment{preuve}[2][]%
-{%
-    \par%
-    \altarticle@comparestring{#1}{}%
-        {\def\argI{\textbf{\boldmath Preuve (\textsl{\thmref{#2}})~:}}}%
-        {\def\argI{\textbf{\boldmath Preuve (\textsl{\thmref{#2}}#1)~:}}}%
-    \begin{leftbartitle}{\argI}%
-        \def\footnotetext{\savefootnote}%
-        \small%
-        \setlength{\belowdisplayskip}{0pt}\setlength{\belowdisplayshortskip}{0pt}\setlength{\abovedisplayskip}{0pt}\setlength{\abovedisplayshortskip}{0pt}%
-        \let\textitemize\itemize%
-        \let\itemize\prvitemize%
+\altarticle@comparestring{\altarticle@babellanguage}{french}{%
+    \addto\captionsfrench{\renewcommand\proofname{Preuve}}%
+    \newenvironment{preuve}[2][]%
+    {%
+        \par%
+        \altarticle@comparestring{#1}{}%
+            {\def\argI{\textbf{\boldmath \proofname{} (\textsl{\thmref{#2}})~:}}}%
+            {\def\argI{\textbf{\boldmath \proofname{} (\textsl{\thmref{#2}}#1)~:}}}%
+        \begin{leftbartitle}{\argI}%
+            \def\footnotetext{\savefootnote}%
+            \small%
+            \setlength{\belowdisplayskip}{0pt}\setlength{\belowdisplayshortskip}{0pt}\setlength{\abovedisplayskip}{0pt}\setlength{\abovedisplayshortskip}{0pt}%
+            \let\textitemize\itemize%
+            \let\itemize\prvitemize%
+    }{%
+        \end{leftbartitle}%
+    }%
 }{%
-    \end{leftbartitle}%
-}%
-\def\proof{\preuve}
+    \newenvironment{preuve}[2][]%
+    {%
+        \par%
+        \altarticle@comparestring{#1}{}%
+            {\def\argI{\textbf{\boldmath \proofname{} (\textsl{\thmref{#2}}):}}}%
+            {\def\argI{\textbf{\boldmath \proofname{} (\textsl{\thmref{#2}}#1):}}}%
+        \begin{leftbartitle}{\argI}%
+            \def\footnotetext{\savefootnote}%
+            \small%
+            \setlength{\belowdisplayskip}{0pt}\setlength{\belowdisplayshortskip}{0pt}\setlength{\abovedisplayskip}{0pt}\setlength{\abovedisplayshortskip}{0pt}%
+            \let\textitemize\itemize%
+            \let\itemize\prvitemize%
+    }{%
+        \end{leftbartitle}%
+    }%
+}
+\let\proof\preuve
+\let\endproof\endpreuve
 %% Code adapted from framed.sty
 \chardef\FrameRestore=\catcode`\| % for debug
 \catcode`\|=\catcode`\% % (debug: insert space after backslash)
@@ -530,14 +678,25 @@
 }{\endMakeFramed}
 %% Default theorems
 \ifaltarticle@defaulttheorems
-    \createtheorem{axiome}{Axiome}{axi}{axiome}{section}{true}
-    \createtheorem{corollaire}{Corollaire}{cor}{corollaire}{section}{true}
-    \createtheorem{definition}{Définition}{def}{définition}{section}{true}
-    \createtheorem{lemme}{Lemme}{lm}{lemme}{section}{true}
-    \createtheorem{notation}{Notation}{not}{notation}{section}{true}
-    \createtheorem{proposition}{Proposition}{prop}{proposition}{section}{true}
-    \createtheorem{remarque}{Remarque}{rem}{remarque}{section}{true}
-    \createtheorem{theoreme}{Théorème}{thm}{théorème}{section}{true}
+    \altarticle@comparestring{\altarticle@babellanguage}{french}{
+        \createtheorem{axiome}{Axiome}{axi}{axiome}{section}{true}
+        \createtheorem{corollaire}{Corollaire}{cor}{corollaire}{section}{true}
+        \createtheorem{definition}{Définition}{def}{définition}{section}{true}
+        \createtheorem{lemme}{Lemme}{lm}{lemme}{section}{true}
+        \createtheorem{notation}{Notation}{not}{notation}{section}{true}
+        \createtheorem{proposition}{Proposition}{prop}{proposition}{section}{true}
+        \createtheorem{remarque}{Remarque}{rem}{remarque}{section}{true}
+        \createtheorem{theoreme}{Théorème}{thm}{théorème}{section}{true}
+    }{
+        \createtheorem{axiom}{Axiom}{axi}{axiom}{section}{true}
+        \createtheorem{corollary}{Corollary}{cor}{corollary}{section}{true}
+        \createtheorem{definition}{Definition}{def}{definition}{section}{true}
+        \createtheorem{lemma}{Lemma}{lm}{lemma}{section}{true}
+        \createtheorem{notation}{Notation}{not}{notation}{section}{true}
+        \createtheorem{proposition}{Proposition}{prop}{proposition}{section}{true}
+        \createtheorem{remark}{Remark}{rem}{remark}{section}{true}
+        \createtheorem{theorem}{Theorem}{thm}{theorem}{section}{true}
+    }
 \fi
 %% Theorem table
 \newcommand*\l@thm{\@dottedtocline{1}{1.5em}{2.3em}}
