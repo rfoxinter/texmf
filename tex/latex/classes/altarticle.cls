@@ -12,11 +12,16 @@
 \DeclareBoolOption{unslantLatin}
 \DeclareBoolOption{defaulttheorems}
 \DeclareBoolOption{bibliography}
+\DeclareBoolOption{index}
 \DeclareBoolOption{titlespace}
+\DeclareBoolOption{draft}
 \DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{article}}
 \ProcessKeyvalOptions*
 \PassOptionsToPackage{\altarticle@babellanguage}{babel}
 \PassOptionsToPackage{\altarticle@geometryargs}{geometry}
+\ifaltarticle@draft
+    \PassOptionsToClass{draft}{article}
+\fi
 
 %%% Import packages and options
 \LoadClass[a4paper]{article}
@@ -24,6 +29,28 @@
 \usepackage{geometry}
 \usepackage{framed}
 \usepackage{enumitem}
+\usepackage{multicol}
+\usepackage{tabularray}
+
+
+
+\BeforeBeginEnvironment{multicols}{\par\vphantom{Ip}\vspace{-\baselineskip}}
+\AfterEndEnvironment{multicols}{\par\vphantom{Ip}\vspace{-\baselineskip}}
+\setcounter{tocdepth}{6}
+
+
+
+%%% Tabularray options
+\SetTblrInner{rowsep=1pt}
+\DefTblrTemplate{caption-tag}{default}{}
+\DefTblrTemplate{caption-sep}{default}{}
+\DefTblrTemplate{caption-text}{default}{}
+\DefTblrTemplate{contfoot-text}{default}{}
+\DefTblrTemplate{conthead-text}{default}{}
+
+
+
+%%% New lists
 \let\propenumerate\relax
 \newcommand{\itemnb}[1]{(\oldstylenums{#1})}
 \newlist{propenumerate}{enumerate}{10}
@@ -37,28 +64,12 @@
 \setlist[prvitemize]{topsep=0pt,nosep,leftmargin=*,labelsep=0pt,label=$\to{}$}
 \newlist{prvenumerate}{enumerate}{10}
 \setlist[prvenumerate]{topsep=0pt,nosep,leftmargin=*,labelsep=0pt,label=\itemnb{\arabic*},beginpenalty=999}
-\usepackage{multicol}
-\setlength\multicolsep{0pt}
-\BeforeBeginEnvironment{multicols}{\par\vphantom{Ip}\vspace{-\baselineskip}}
-\AfterEndEnvironment{multicols}{\par\vphantom{Ip}\vspace{-\baselineskip}}
-\usepackage{tabularray}
-\SetTblrInner{rowsep=1pt}
-\DefTblrTemplate{caption-tag}{default}{}
-\DefTblrTemplate{caption-sep}{default}{}
-\DefTblrTemplate{caption-text}{default}{}
-\DefTblrTemplate{contfoot-text}{default}{}
-\DefTblrTemplate{conthead-text}{default}{}
-\setcounter{tocdepth}{6}
 
 
 
 %%% Article specific commands
+\def\oldcleardoublepage\cleardoublepage
 \def\cleardoublepage{\clearpage\ifodd\c@page\else\hbox{}\newpage\if@twocolumn\hbox{}\newpage\fi\fi}
-\newcommand{\gettikzxy}[3]{%
-    \tikz@scan@one@point\pgfutil@firstofone#1\relax
-    \edef#2{\the\pgf@x}%
-    \edef#3{\the\pgf@y}%
-}
 
 
 
@@ -111,7 +122,7 @@
     \altarticle@comparestring{\arabic{#1}}{\arabic{#2}}{\relax}{\refstepcounter{#2}\incrementcounter{#1}{#2}}%
 }
 
-\altarticle@comparestring{\altarticle@babellanguage}{french}{
+\altarticle@ifinlist{french}{\altarticle@babellanguage}{
     \newcommand{\createtheorem}[6]{%
         \@ifundefined{c@thms#5counter}{
             \newcounter{thms#5counter}
@@ -128,7 +139,7 @@
             \counterwithin{thms#5counter}{#5}
             \counterwithin{#1}{#5}%
           \fi%
-        \setcounter{#1}{0}%x
+        \setcounter{#1}{0}%
         \expandafter\let\csname #1\endcsname\relax%
         \expandafter\let\csname @#1star\endcsname\relax%
         \expandafter\let\csname @#1startmp\endcsname\relax%
@@ -342,21 +353,21 @@
                 \altarticle@comparestring{##1}{true}{%
                     \textbf{\boldmath#2\ifthmname{} (\textsl{##2})\fi{}:}{} %
                 }{%
-                    \textbf{\boldmath#2\ifthmname{} (\textsl{##2})\fi{}:}\ifdefempty{\argI}{}{\def\@currentlabel{\thmoptargII\argII}\label{t@#3 \argI}}{}\addcontentsline{to#1}{thm}{\ignorespaces{\noexpand\expandafter\noexpand\MakeUppercase\thmoptargII\tocargII}}{} %
+                    \textbf{\boldmath#2\ifthmname{} (\textsl{##2})\fi{}:}\ifdefempty{\argI}{}{\def\@currentlabel{\argII\thmoptargII}\label{t@#3 \argI}}{}\addcontentsline{to#1}{thm}{\ignorespaces{\noexpand\expandafter\noexpand\MakeUppercase\tocargII\thmoptargII}}{} %
                 }%
             \fi%
         }%
     }%
 }
 %% Proof
-\altarticle@comparestring{\altarticle@babellanguage}{french}{%
+\altarticle@ifinlist{french}{\altarticle@babellanguage}{%
     \addto\captionsfrench{\renewcommand\proofname{Preuve}}%
     \newenvironment{preuve}[2][]%
     {%
         \par%
         \altarticle@comparestring{#1}{}%
-            {\def\argI{\textbf{\boldmath \proofname{} (\textsl{\thmref{#2}})~:}}}%
-            {\def\argI{\textbf{\boldmath \proofname{} (\textsl{\thmref{#2}}#1)~:}}}%
+            {\def\argI{\textbf{\boldmath Preuve (\textsl{\thmref{#2}})~:}}}%
+            {\def\argI{\textbf{\boldmath Preuve (\textsl{\thmref{#2}}#1)~:}}}%
         \begin{leftbartitle}{\argI}%
             \def\footnotetext{\savefootnote}%
             \small%
@@ -678,7 +689,7 @@
 }{\endMakeFramed}
 %% Default theorems
 \ifaltarticle@defaulttheorems
-    \altarticle@comparestring{\altarticle@babellanguage}{french}{
+    \altarticle@ifinlist{french}{\altarticle@babellanguage}{
         \createtheorem{axiome}{Axiome}{axi}{axiome}{section}{true}
         \createtheorem{corollaire}{Corollaire}{cor}{corollaire}{section}{true}
         \createtheorem{definition}{Définition}{def}{définition}{section}{true}
@@ -699,18 +710,128 @@
     }
 \fi
 %% Theorem table
-\newcommand*\l@thm{\@dottedtocline{1}{1.5em}{2.3em}}
-\newcommand\theoremtable[2]{%
-    \section*{#1%
+\newcommand*\l@thm{\@dottedtocline{1}{0em}{1.4em}}
+\newcommand*{\l@letter}[2]{%
+  \ifnum \c@tocdepth >-2%
+    \addpenalty{-\@highpenalty}%
+    \addvspace{2.5pt}% Removes default spacing
+    {\bfseries #1}\hfil #2\par%
+    \nobreak%
+  \fi}
+\newif\ifaltarticle@indexfiles
+\altarticle@indexfilesfalse
+\ifaltarticle@index\IfFileExists{sorttables.py}{\altarticle@indexfilesfalse}{\altarticle@indexfilestrue}\fi
+\ifaltarticle@indexfiles
+    \begin{filecontents*}{sorttables.py}
+from re import findall, search, sub
+import sys
+from unicodedata import category, normalize
+
+jobname = sys.argv[1]
+
+def strip_accents(s: str) -> str:
+   return "".join(c for c in normalize("NFD", s) if category(c) != "Mn")
+
+def replace_math(math: str) -> str:
+    mathsearch = search(r"\\[\w]*[{| ]([\w]*)", math)
+    while mathsearch != None:
+        math = math.replace(mathsearch.group(0), mathsearch.group(1))
+        mathsearch = search(r"\\[\w]*[{| ]([\w]*)", math)
+    return math
+
+def get_content(line: str) -> tuple[str, str]:
+    result = search(r"\\MakeUppercase \[\]\{\\comparestring \{\\toc \}\{false\}\{.*?\}\{([a-zA-Zéèçàù \\]*)\}\}", line)
+    if result != None:
+        grp = result.group(1)
+        line = sub(r"\\MakeUppercase \[\]\{\\comparestring \{\\toc \}\{false\}\{.*?\}\{[a-zA-Zéèçàù \\]*\}\}", "\\\\MakeUppercase []" + grp, line)
+    nresult = search(r"\\MakeUppercase \[\]([a-zA-ZàéèçùÀÉÈÇÙ])", line)
+    if nresult != None:
+        grp = nresult.group(1)
+        line = sub(r"\\MakeUppercase \[\]([a-zA-ZàéèçùÀÉÈÇÙ])", "\\\\MakeUppercase []{" + grp + "}", line)
+    title = findall(r"\\MakeUppercase \[\]\{[a-zA-ZéèàùÀÉÈÇÙ\\\\{\}'`$ ]*\}.*?}", line)[0]
+    line = line.replace("\\MakeUppercase []{$}", "$")
+    math = search(r"\$([\\\{\}\[\]\(\)\w\s]*)\$", line)
+    title = title.replace("\\MakeUppercase []{$}", "$")
+    title = title.replace("\\MakeUppercase []{", "")
+    linemath = ""
+    if math != None:
+        linemath = math.group(1)
+        if title[0] == "$":
+            title = title.replace(math.group(0), sub("$", "", replace_math(linemath)))
+    title = sub(r"\{[0-9]*\}", "", title)
+    title = sub(r"\\", "", title)
+    title = sub(r"\[", "", title)
+    title = sub(r"\]", "", title)
+    title = sub(r"\{", "", title)
+    title = sub(r"\}", "", title)
+    title = sub(r"'", "", title)
+    title = sub(r"`", "", title)
+    title = sub(r"\"", "", title)
+    title = sub(r"\s+", " ", title)
+    title = sub(r"---", " ", title)
+    title = sub(r"--", " ", title)
+    title = sub(r"-", " ", title)
+    return strip_accents(title.lower()), line
+
+try:
+    content = []
+    try:
+        deffile = open(f"./{jobname}.todefinition", "r", encoding="utf-8").readlines()
+        for line in deffile:
+            content.append(get_content(line))
+    except OSError:
+        pass
+    try:
+        thmfile = open(f"./{jobname}.totheoreme", "r", encoding="utf-8").readlines()
+        for line in thmfile:
+            content.append(get_content(line))
+    except OSError:
+        pass
+    try:
+        thmfile = open(f"./{jobname}.totheorem", "r", encoding="utf-8").readlines()
+        for line in thmfile:
+            content.append(get_content(line))
+    except OSError:
+        pass
+    content.sort()
+
+    file = open(f"./{jobname}.totheoreme", "w", encoding="utf-8")
+    file.close()
+    file = open(f"./{jobname}.totheorem", "w", encoding="utf-8")
+    file.close()
+    file = open(f"./{jobname}.todefinition", "w", encoding="utf-8")
+    prevletter = ""
+    for line in content:
+        if line[0][0] != prevletter:
+            prevletter = line[0][0]
+            file.write("\\contentsline {letter}{" + prevletter.upper() + "}{}{}\\nobreak%\n")
+        file.write(line[1])
+    file.close()
+    
+except OSError:
+    print("Error; file not found")
+    \end{filecontents*}
+\fi
+\usepackage{multicol}
+\newcommand\theoremtable{%
+    \input{|python3 sorttables.py "\jobname"}%
+    \section*{Index%
         \@mkboth{%
-           \noexpand\expandafter\noexpand\MakeUppercase#1}{\noexpand\expandafter\noexpand\MakeUppercase#1}}%
-    \@starttoc{to#2}%
-    }
+           \noexpand\expandafter\noexpand\MakeUppercase Index}{\noexpand\expandafter\noexpand\MakeUppercase Index}}%
+    \addcontentsline{toc}{section}{\protect\numberline{}Index}%
+    \begin{multicols}{2}\raggedcolumns%
+    \@starttoc{totheoreme}%
+    \@starttoc{totheorem}%
+    \@starttoc{todefinition}%
+    \end{multicols}%
+    \def\toc{false}%
+}
+\DeclareRobustCommand{\commandcommand}[1]{\csname#1\endcsname}
 
 
 
 %%% Figures
-\altarticle@comparestring\altarticle@babellanguage{french}{
+\altarticle@ifinlist{french}\altarticle@babellanguage{
     \renewenvironment{table}
         {\@float{tableau}}
         {\end@float}
@@ -759,15 +880,18 @@
 
 
 %%% Set lengths
-\AtBeginDocument{
-    \setlength{\belowdisplayskip}{0pt}
-    \setlength{\belowdisplayshortskip}{0pt}
-    \setlength{\abovedisplayskip}{0pt}
-    \setlength{\abovedisplayshortskip}{0pt}
-    \setlength{\parindent}{0pt}
-    \newlength\enumlinewidth
-    \setlength{\enumlinewidth}{\linewidth}
-}
+\AtBeginDocument{%
+    \setlength{\belowdisplayskip}{0pt}%
+    \setlength{\belowdisplayshortskip}{0pt}%
+    \setlength{\abovedisplayskip}{0pt}%
+    \setlength{\abovedisplayshortskip}{0pt}%
+    \setlength{\parindent}{0pt}%
+    \setlength{\topsep}{0pt}%
+    \setlength{\partopsep}{0pt}%
+    \newlength\enumlinewidth%
+    \setlength{\enumlinewidth}{\linewidth}%
+    \setlength\multicolsep{0pt}%
+}%
 \setlength{\dotsep}{3.5pt}
 \setlength{\dotlift}{0.5pt}
 \setlength{\matsep}{3.5pt}
