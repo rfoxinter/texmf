@@ -20,8 +20,7 @@
 \PassOptionsToPackage{obeyspaces,hyphens}{url}
 \usepackage{hyperref}
 \hypersetup{hidelinks,colorlinks=false,linktoc=all}
-\let\oldurl\url
-\renewcommand{\url}[1]{{\color{blue}\oldurl{#1}}}
+\newcommand{\blueurl}[1]{{\color{blue}\url{#1}}}
 \usepackage{etoolbox}
 \usepackage[nopatch=footnote]{microtype}
 \DisableLigatures{encoding = OML}
@@ -104,6 +103,114 @@
 
 
 
+%%% Custom header
+\colorlet{headercolour}{black}
+\newcommand{\currenttime}{%
+  \@tempcnta=\the\time
+  \@tempcntb=\@tempcnta
+  \divide\@tempcntb by 60   % hours
+  \the\@tempcntb:%
+  \@tempcnta=\@tempcnta
+  \multiply\@tempcntb by 60
+  \advance\@tempcnta by -\@tempcntb % minutes
+  \ifnum\@tempcnta<10 0\fi
+  \the\@tempcnta
+}
+\altarticle@ifinlist{french}{\altarticle@babellanguage}{
+    \def\DayOfWeek{%
+      \newcount\dow                % Gets day of the week
+      \newcount\leap            % Leap year fingaler
+      \newcount\x                % Temp register
+      \newcount\y                 % Another temp register
+    %        leap = year + (month - 14)/12;
+      \leap=\month \advance\leap by -14 \divide\leap by 12
+      \advance\leap by \year
+    %        dow = (13 * (month + 10 - (month + 10)/13*12) - 1)/5
+      \dow=\month \advance\dow by 10
+      \y=\dow \divide\y by 13 \multiply\y by 12
+      \advance\dow by -\y \multiply\dow by 13 \advance\dow by -1 \divide\dow by 5
+    %        dow += day + 77 + 5 * (leap % 100)/4
+      \advance\dow by \day \advance\dow by 77
+      \x=\leap \y=\x \divide\y by 100 \multiply\y by 100 \advance\x by -\y
+      \multiply\x by 5 \divide\x by 4 \advance\dow by \x
+    %        dow += leap / 400
+      \x=\leap \divide\x by 400 \advance\dow by \x
+    %        dow -= leap / 100 * 2;
+    %        dow = (dow % 7)
+      \x=\leap \divide\x by 100 \multiply\x by 2 \advance\dow by -\x
+      \x=\dow \divide\x by 7 \multiply\x by 7 \advance\dow by -\x
+      \ifcase\dow dimanche\or lundi\or mardi\or mercredi\or
+        jeudi\or vendredi\or samedi\fi
+    }
+    \def\MonthOfYear{\ifcase\month\or
+      janvier\or février\or mars\or avril\or mai\or juin\or
+      juillet\or août\or septembre\or octobre\or novembre\or décembre\fi}
+    \def\ps@versionfooter{%
+      % Header (right side for one-sided, left+right for two-sided)
+      \def\@oddhead{\hfil\textcolor{headercolour}{Version du \DayOfWeek{} \number\day{} \MonthOfYear{} \number\year{} à \currenttime}\hfil}%
+      % Footer (centered page number)
+      \def\@oddfoot{\hfil\thepage\hfil}%
+      % For two-sided documents, also define even side (same here)
+      \def\@evenhead{\@oddhead}%
+      \def\@evenfoot{\@oddfoot}%
+    }
+}{
+    \def\DayOfWeek{%
+      \newcount\dow                % Gets day of the week
+      \newcount\leap            % Leap year fingaler
+      \newcount\x                % Temp register
+      \newcount\y                 % Another temp register
+    %        leap = year + (month - 14)/12;
+      \leap=\month \advance\leap by -14 \divide\leap by 12
+      \advance\leap by \year
+    %        dow = (13 * (month + 10 - (month + 10)/13*12) - 1)/5
+      \dow=\month \advance\dow by 10
+      \y=\dow \divide\y by 13 \multiply\y by 12
+      \advance\dow by -\y \multiply\dow by 13 \advance\dow by -1 \divide\dow by 5
+    %        dow += day + 77 + 5 * (leap % 100)/4
+      \advance\dow by \day \advance\dow by 77
+      \x=\leap \y=\x \divide\y by 100 \multiply\y by 100 \advance\x by -\y
+      \multiply\x by 5 \divide\x by 4 \advance\dow by \x
+    %        dow += leap / 400
+      \x=\leap \divide\x by 400 \advance\dow by \x
+    %        dow -= leap / 100 * 2;
+    %        dow = (dow % 7)
+      \x=\leap \divide\x by 100 \multiply\x by 2 \advance\dow by -\x
+      \x=\dow \divide\x by 7 \multiply\x by 7 \advance\dow by -\x
+      \ifcase\dow Sunday\or Monday\or Tuesday\or Wednesday\or
+        Thursday\or Friday\or Saturday\fi
+    }
+    \def\MonthOfYear{\ifcase\month\or
+      January\or February\or March\or April\or May\or June\or
+      July\or August\or September\or October\or November\or December\fi}
+    \def\ps@versionfooter{%
+      % Header (right side for one-sided, left+right for two-sided)
+      \def\@oddhead{\hfil\textcolor{headercolour}{Version of \DayOfWeek{} \number\day{} \MonthOfYear{} \number\year{} at \currenttime}\hfil}%
+      % Footer (centered page number)
+      \def\@oddfoot{\hfil\thepage\hfil}%
+      % For two-sided documents, also define even side (same here)
+      \def\@evenhead{\@oddhead}%
+      \def\@evenfoot{\@oddfoot}%
+    }
+}
+
+
+
+%%% Draft mode
+\ifaltarticle@draft
+    \usepackage{lipsum}
+    \colorlet{headercolour}{gray}
+    \tikzifexternalizing{}{
+        \usepackage{showframe}
+        \renewcommand*\ShowFrameColor{\color{headercolour}}
+        \renewcommand*\ShowFrameLinethickness{.2pt}
+    }
+    \apptocmd{\maketitle}{\thispagestyle{versionfooter}}{}{}
+    \pagestyle{versionfooter}
+\fi
+
+
+
 %%% General commands
 \DeclareRobustCommand\circled[1]{\vphantom{\ensuremath{#1}}\smash{\tikzset{external/export=false}\tikz[baseline={(char.base)}]{\node[shape=circle,draw,inner sep=2pt] (char) {#1};}}}
 \DeclareRobustCommand\boxed[1]{\vphantom{\ensuremath{#1}}\smash{\tikzset{external/export=false}\tikz[baseline={(char.base)}]{\node[shape=rectangle,rounded corners=0.05cm,draw,inner sep=2pt] (char) {\ensuremath{#1}};}}}
@@ -126,10 +233,18 @@
 \tikzset{>=Computer Modern Rightarrow}
 \tikzset{no body/.style={/tikz/dash pattern=on 0 off 100pt, line cap=butt}}
 \tikzset{no cd head/.style={-Butt Cap, shorten >=0.05ex}}
+\tikzset{curve/.style={settings={#1},to path={(\tikztostart)
+    .. controls ($(\tikztostart)!\pv{pos}!(\tikztotarget)!\pv{height}!270:(\tikztotarget)$)
+    and ($(\tikztostart)!1-\pv{pos}!(\tikztotarget)!\pv{height}!270:(\tikztotarget)$)
+    .. (\tikztotarget)\tikztonodes}},
+    settings/.code={\tikzset{quiver/.cd,#1}
+        \def\pv##1{\pgfkeysvalueof{/tikz/quiver/##1}}},
+    quiver/.cd,pos/.initial=0.35,height/.initial=0}
 \tikzcdset{
     arrow style=tikz,
     every arrow/.append style={line cap=round},
     equal/.code={\tikzcdset{double line, nfold}\pgfsetarrows{tikzcd implies cap-tikzcd implies cap}},
+    cd equal/.code={\tikzcdset{double line}\pgfsetarrows{tikzcd implies cap-tikzcd implies cap}},
     mono/.code={\pgfsetarrows{>->}},
     epi/.code={\pgfsetarrows{->[sep=+0pt -2.6]>}},
     reg epi/.code={\pgfsetarrows{-filled cm}},
@@ -230,6 +345,35 @@
 }%
 \newcommand\tikzcdsqname[6][]{
     \path[overlay] (\tikzcdmatrixname-#3-#4.center) -- (\tikzcdmatrixname-#5-#6.center) node[midway, anchor=center, #1, shape=rectangle, rounded corners=0.05cm, draw, inner sep=2pt] {{\ensuremath{\scriptstyle#2}}};
+}
+\pgfkeys{/pgf/images/include external/.code={\includegraphics{#1}}}
+\let\oldtikzcd\tikzcd
+\let\endoldtikzcd\endtikzcd
+\newcommand{\mytikzcdcontext}[2]{
+  \begin{tikzpicture}[baseline=(maintikzcdnode.base)]
+    \node (maintikzcdnode) [inner sep=0, outer sep=0] {%
+      \begin{oldtikzcd}[#1]
+        #2
+      \end{oldtikzcd}%
+    };
+  \end{tikzpicture}%
+}
+\ExplSyntaxOn
+\RenewDocumentEnvironment{tikzcd}{O{}+b}
+ {
+  \tl_set:Nn \l_tmpa_tl { #2 }
+  \regex_replace_all:nnN { \& } { \cA\& } \l_tmpa_tl
+  \mytikzcd:nV { #1 } \l_tmpa_tl
+ }
+ {}
+
+\cs_set_eq:NN \mytikzcd:nn \mytikzcdcontext
+\cs_generate_variant:Nn \mytikzcd:nn { nV }
+\ExplSyntaxOff
+\newcommand{\gettikzxy}[3]{%
+    \tikz@scan@one@point\pgfutil@firstofone#1\relax
+    \edef#2{\the\pgf@x}%
+    \edef#3{\the\pgf@y}%
 }
 
 
@@ -383,8 +527,9 @@
 \ifaltarticle@bibliography
     \PassOptionsToPackage{sorting=\altarticle@bibsorting}{biblatex}
     \usepackage[backend=biber, style=unsrt, maxcitenames=50]{biblatex}
+    \ExecuteBibliographyOptions{sortcites}
     \apptocmd{\printbibliography}{\addcontentsline{toc}{section}{\protect\numberline{}\refname}}{}{}
-    \altarticle@comparestring{\altarticle@babellanguage}{french}{}{
+    \altarticle@ifinlist{french}{\altarticle@babellanguage}{}{
         \protected\def\mkbibordedition#1{%
             \begingroup
                 \@tempcnta0#1\relax\number\@tempcnta
@@ -395,6 +540,14 @@
                 \ifcase\@tempcnta\textsuperscript{th}\or\textsuperscript{st}\or\textsuperscript{nd}\or\textsuperscript{rd}\else\textsuperscript{th}\fi
             \endgroup}%
         \protected\def\mkbibnamefamily#1{\textsc{\textnohyphenation{#1}}}
+    }
+    \DeclareSourcemap{
+      \maps[datatype=bibtex]{
+        \map[overwrite=true]{
+          \step[fieldsource=fjournal]
+          \step[fieldset=journal, origfieldval]
+        }
+      }
     }
     \renewcommand*{\postnotedelim}{\addsemicolon\space}
     \setlength{\bibitemsep}{0pt}
@@ -939,7 +1092,7 @@
 \let\kernFFN\relax
 \newcommand{\kernFFN}{{ }}
 \def\dotFFN{.}
-\altarticle@comparestring{\altarticle@babellanguage}{french}{%
+\altarticle@ifinlist{french}{\altarticle@babellanguage}{%
     \let\insertfootnotemarkFB\relax
     \newcommand\insertfootnotemarkFB{%
         \rule\z@\footnotesep%
