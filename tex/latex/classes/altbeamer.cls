@@ -5,14 +5,21 @@
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{prefix=altarticle@}
 \DeclareStringOption[french]{babellanguage}
+\DeclareStringOption[none]{bibsorting}
 \DeclareBoolOption{unslantgreek}
 \DeclareBoolOption{unslantlatin}
 \DeclareBoolOption{unslantLatin}
 \DeclareBoolOption{defaulttheorems}
 \DeclareBoolOption{bibliography}
+\DeclareBoolOption{index}
+\DeclareBoolOption{titlespace}
+\DeclareBoolOption{draft}
 \DeclareDefaultOption{\PassOptionsToClass{\CurrentOption}{beamer}}
 \ProcessKeyvalOptions*
 \PassOptionsToPackage{\altarticle@babellanguage}{babel}
+\ifaltarticle@draft
+    \PassOptionsToClass{draft}{beamer}
+\fi
 
 %%% Import packages and options
 \LoadClass{beamer}
