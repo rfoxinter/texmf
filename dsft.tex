@@ -1,0 +1,34 @@
+\documentclass[12pt, babellanguage=british, titlespace]{altarticle}
+
+\title{Documentation for the \texttt{dsft} package}
+\date{}
+
+\newcommand{\optionline}[2][]{\par\medskip\hspace*{-.75cm}\texttt{#2}\hfill\if\relax\detokenize{#1}\relax\else\texttt{default:~#1}\fi\par}
+\newcommand{\aargt}[1]{\ensuremath{\langle}\textrm{{\emph{#1}}}\ensuremath{\rangle}}
+\newcommand{\argt}[1]{\texttt{\{}\ensuremath{\langle}\textrm{{\emph{#1}}}\ensuremath{\rangle}\texttt{\}}}
+\newcommand{\optargt}[1]{\texttt{[}\ensuremath{\langle}\textrm{\emph{#1}}\ensuremath{\rangle}\texttt{]}}
+\newcommand{\commandline}[1][]{\def\argI{#1}\ccommandline}
+\newcommand{\ccommandline}[2][]{\par\medskip\hspace*{-.75cm}\texttt{\textbackslash#2}\argI{}\hfill\if\relax\detokenize{#1}\relax\else\texttt{default:~#1}\fi\par}
+\newcommand{\pcommandline}[1][]{\def\argI{#1}\pccommandline}
+\newcommand{\pccommandline}[2][]{\par\hspace*{-.75cm}\hphantom{\texttt{\textbackslash#2}}\argI{}\hfill\if\relax\detokenize{#1}\relax\else\texttt{default:~#1}\fi\par}
+\newcommand{\envline}[1][]{\def\argI{#1}\eenvline}
+\newcommand{\eenvline}[2][]{\par\medskip\hspace*{-.75cm}\texttt{\textbackslash begin\{#2\}}\argI{}~...~\texttt{\textbackslash end\{#2\}}\hfill\if\relax\detokenize{#1}\relax\else\texttt{default:~#1}\fi\par}
+
+\begin{document}
+\maketitle
+This package provides a doublestroke version of the character $1$ and other characters added after.
+
+\medskip
+
+\commandline{dsone}This command produces $\dsone$.
+\commandline[\argt{sub}]{ind}This command outputs the indicator function of $\emph{sub}$ and produces for instance $\ind E$.
+\commandline{oldsquare}This command produces $\oldsquare$. It corresponds to the \texttt{\textbackslash square} command provided by the \ensuremath{\mathcal{A}\kern-.1667em\lower.5ex\hbox{\ensuremath{\mathcal{M}}}\kern-.125em\mathcal{S}}.
+\commandline{oldstar}This command produces $\oldstar$. It corresponds to the \texttt{\textbackslash star} command provided by \LaTeX.
+\commandline{oldtriangle}This command produces $\oldtriangle$. It corresponds to the \texttt{\textbackslash triangle} command provided by \LaTeX.
+\commandline{star}This command produces $\star$.
+\commandline{square}This command produces $\square$.
+\commandline{triangle}This command produces $\triangle$.
+\commandline[\argt{level}]{filledstar}This command gradually fills the star provided by the \texttt{\textbackslash star} command. The fill level goes from 0 to 5 (included). Any \emph{level} greater than 5 will be with display a hbox, with width the one of the \texttt{\textbackslash star} glyph.
+
+The different glyphs (produced as \texttt{\textbackslash Large}) are: {\Large$\filledstar0\filledstar1\filledstar2\filledstar3\filledstar4\filledstar5$}.
+\end{document}
