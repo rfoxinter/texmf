@@ -145,15 +145,6 @@
     \def\MonthOfYear{\ifcase\month\or
       janvier\or février\or mars\or avril\or mai\or juin\or
       juillet\or août\or septembre\or octobre\or novembre\or décembre\fi}
-    \def\ps@versionfooter{%
-      % Header (right side for one-sided, left+right for two-sided)
-      \def\@oddhead{\hfil\textcolor{headercolour}{Version du \DayOfWeek{} \number\day{} \MonthOfYear{} \number\year{} à \currenttime}\hfil}%
-      % Footer (centered page number)
-      \def\@oddfoot{\hfil\thepage\hfil}%
-      % For two-sided documents, also define even side (same here)
-      \def\@evenhead{\@oddhead}%
-      \def\@evenfoot{\@oddfoot}%
-    }
 }{
     \def\DayOfWeek{%
       \newcount\dow                % Gets day of the week
@@ -183,15 +174,6 @@
     \def\MonthOfYear{\ifcase\month\or
       January\or February\or March\or April\or May\or June\or
       July\or August\or September\or October\or November\or December\fi}
-    \def\ps@versionfooter{%
-      % Header (right side for one-sided, left+right for two-sided)
-      \def\@oddhead{\hfil\textcolor{headercolour}{Version of \DayOfWeek{} \number\day{} \MonthOfYear{} \number\year{} at \currenttime}\hfil}%
-      % Footer (centered page number)
-      \def\@oddfoot{\hfil\thepage\hfil}%
-      % For two-sided documents, also define even side (same here)
-      \def\@evenhead{\@oddhead}%
-      \def\@evenfoot{\@oddfoot}%
-    }
 }
 
 
@@ -205,8 +187,6 @@
         \renewcommand*\ShowFrameColor{\color{headercolour}}
         \renewcommand*\ShowFrameLinethickness{.2pt}
     }
-    \apptocmd{\maketitle}{\thispagestyle{versionfooter}}{}{}
-    \pagestyle{versionfooter}
 \fi
 
 
