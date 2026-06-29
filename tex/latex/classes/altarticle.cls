@@ -73,6 +73,35 @@
 
 
 
+%%% Draft mode
+\altarticle@ifinlist{french}{\altarticle@babellanguage}{
+    \def\ps@versionheader{%
+      % Header (right side for one-sided, left+right for two-sided)
+      \def\@oddhead{\hfil\textcolor{headercolour}{Version du \DayOfWeek{} \number\day{} \MonthOfYear{} \number\year{} à \currenttime}\hfil}%
+      % Footer (centered page number)
+      \def\@oddfoot{\hfil\thepage\hfil}%
+      % For two-sided documents, also define even side (same here)
+      \def\@evenhead{\@oddhead}%
+      \def\@evenfoot{\@oddfoot}%
+    }
+}{
+    \def\ps@versionheader{%
+      % Header (right side for one-sided, left+right for two-sided)
+      \def\@oddhead{\hfil\textcolor{headercolour}{Version of \DayOfWeek{} \number\day{} \MonthOfYear{} \number\year{} at \currenttime}\hfil}%
+      % Footer (centered page number)
+      \def\@oddfoot{\hfil\thepage\hfil}%
+      % For two-sided documents, also define even side (same here)
+      \def\@evenhead{\@oddhead}%
+      \def\@evenfoot{\@oddfoot}%
+    }
+}
+\ifaltarticle@draft
+    \apptocmd{\maketitle}{\thispagestyle{versionheader}}{}{}
+    \pagestyle{versionheader}
+\fi
+
+
+
 %%% Sections and title
 \renewcommand\section{\@startsection {section}{1}{\z@}%
     {-0.5ex \@plus -0.25ex \@minus -0.25ex}%
