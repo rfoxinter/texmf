@@ -1,0 +1,47 @@
+\documentclass[12pt, babellanguage=british, titlespace]{altarticle}
+\usepackage{bbmt}
+
+\title{Documentation for the \texttt{bbmt} package}
+\date{}
+
+\newcommand{\optionline}[2][]{\par\medskip\hspace*{-.75cm}\texttt{#2}\hfill\if\relax\detokenize{#1}\relax\else\texttt{default:~#1}\fi\par}
+\newcommand{\aargt}[1]{\ensuremath{\langle}\textrm{{\emph{#1}}}\ensuremath{\rangle}}
+\newcommand{\argt}[1]{\texttt{\{}\ensuremath{\langle}\textrm{{\emph{#1}}}\ensuremath{\rangle}\texttt{\}}}
+\newcommand{\optargt}[1]{\texttt{[}\ensuremath{\langle}\textrm{\emph{#1}}\ensuremath{\rangle}\texttt{]}}
+\newcommand{\commandline}[1][]{\def\argI{#1}\ccommandline}
+\newcommand{\ccommandline}[2][]{\par\medskip\hspace*{-.75cm}\texttt{\textbackslash#2}\argI{}\hfill\if\relax\detokenize{#1}\relax\else\texttt{default:~#1}\fi\par}
+\newcommand{\pcommandline}[1][]{\def\argI{#1}\pccommandline}
+\newcommand{\pccommandline}[2][]{\par\hspace*{-.75cm}\hphantom{\texttt{\textbackslash#2}}\argI{}\hfill\if\relax\detokenize{#1}\relax\else\texttt{default:~#1}\fi\par}
+\newcommand{\envline}[1][]{\def\argI{#1}\eenvline}
+\newcommand{\eenvline}[2][]{\par\medskip\hspace*{-.75cm}\texttt{\textbackslash begin\{#2\}}\argI{}~...~\texttt{\textbackslash end\{#2\}}\hfill\if\relax\detokenize{#1}\relax\else\texttt{default:~#1}\fi\par}
+
+\begin{document}
+\maketitle
+This package provides a type 1 version of the \texttt{bbm} font. The glyphs were created using fontforge. It needs to be loaded after the \texttt{amsfonts} package.
+
+\medskip
+
+\commandline[\argt{characters}]{amsbb}This command outputs the blackboard font defined by the \ensuremath{\mathcal{A}\kern-.1667em\lower.5ex\hbox{\ensuremath{\mathcal{M}}}\kern-.125em\mathcal{S}}.
+
+Here are the available characters (no bold version):
+
+$\amsbb{ABCDEFGHIJKLMNOPQRSTUBWXYZ}$
+\commandline[\argt{characters}]{mathbb}This command outputs the vecrotised version of the blackboard serif font defined by the \texttt{bbm} package.
+
+Here are the available characters in normal weight:
+
+$\mathbb{ABCDEFGHIJKLMNOPQRSTUBWXYZabcdefghijklmnopqrstuvwxyz12}$
+
+Here are the available characters in bold weight:
+
+{\boldmath$\mathbb{ABCDEFGHIJKLMNOPQRSTUBWXYZabcdefghijklmnopqrstuvwxyz12}$}
+\commandline[\argt{characters}]{mathbbss}This command outputs the vecrotised version of the blackboard sans serif font defined by the \texttt{bbm} package.
+
+Here are the available characters in normal weight:
+
+$\mathbbss{ABCDEFGHIJKLMNOPQRSTUBWXYZabcdefghijklmnopqrstuvwxyz12}$
+
+Here are the available characters in bold weight:
+
+{\boldmath$\mathbbss{ABCDEFGHIJKLMNOPQRSTUBWXYZabcdefghijklmnopqrstuvwxyz12}$}
+\end{document}
